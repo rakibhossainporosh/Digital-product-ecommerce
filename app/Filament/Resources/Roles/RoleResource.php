@@ -104,31 +104,37 @@ class RoleResource extends Resource
             ->columns([
                 TextColumn::make('row_index')
                     ->rowIndex()
-                    ->label('#'),
+                    ->label('#')
+                    ->toggleable(),
                 TextColumn::make('name')
                     ->weight(FontWeight::Medium)
                     ->label(__('filament-shield::filament-shield.column.name'))
                     ->formatStateUsing(fn (string $state): string => Str::headline($state))
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('guard_name')
                     ->badge()
                     ->color('warning')
-                    ->label(__('filament-shield::filament-shield.column.guard_name')),
+                    ->label(__('filament-shield::filament-shield.column.guard_name'))
+                    ->toggleable(),
                 TextColumn::make('team.name')
                     ->default('Global')
                     ->badge()
                     ->color(fn (mixed $state): string => str($state)->contains('Global') ? 'gray' : 'primary')
                     ->label(__('filament-shield::filament-shield.column.team'))
                     ->searchable()
-                    ->visible(fn (): bool => static::shield()->isCentralApp() && Utils::isTenancyEnabled()),
+                    ->visible(fn (): bool => static::shield()->isCentralApp() && Utils::isTenancyEnabled())
+                    ->toggleable(),
                 TextColumn::make('permissions_count')
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.permissions'))
                     ->counts('permissions')
-                    ->color('primary'),
+                    ->color('primary')
+                    ->toggleable(),
                 TextColumn::make('updated_at')
                     ->label(__('filament-shield::filament-shield.column.updated_at'))
-                    ->dateTime(),
+                    ->dateTime()
+                    ->toggleable(),
             ])
             ->filters([
                 //

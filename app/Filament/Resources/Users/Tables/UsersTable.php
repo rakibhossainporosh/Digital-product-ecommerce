@@ -26,13 +26,15 @@ class UsersTable
             ->columns([
                 TextColumn::make('row_index')
                     ->rowIndex()
-                    ->label('#'),
+                    ->label('#')
+                    ->toggleable(),
 
                 TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
                     ->sortable()
-                    ->weight('medium'),
+                    ->weight('medium')
+                    ->toggleable(),
 
                 TextColumn::make('email')
                     ->label('Email Address')
@@ -40,7 +42,8 @@ class UsersTable
                     ->sortable()
                     ->copyable()
                     ->copyMessage('Email address copied')
-                    ->icon('heroicon-m-envelope'),
+                    ->icon('heroicon-m-envelope')
+                    ->toggleable(),
 
                 TextColumn::make('roles.name')
                     ->label('Roles')
@@ -51,7 +54,8 @@ class UsersTable
                         'manager' => 'info',
                         default => 'gray',
                     })
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
 
                 IconColumn::make('status')
                     ->label('Active')
@@ -60,7 +64,8 @@ class UsersTable
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('email_verified_at')
                     ->label('Verified')
