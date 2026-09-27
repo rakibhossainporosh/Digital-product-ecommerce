@@ -18,7 +18,7 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Standard Shield permissions for entities
-        $entities = ['User', 'Role', 'Category', 'Product', 'LicenseKey', 'Customer', 'WalletTransaction', 'Order', 'PromoCode'];
+        $entities = ['User', 'Role', 'Category', 'Product', 'LicenseKey', 'Customer', 'WalletTransaction', 'Order', 'PromoCode', 'Setting', 'PaymentTransaction'];
         $abilities = [
             'ViewAny',
             'View',
