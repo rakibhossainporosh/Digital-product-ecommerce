@@ -17,8 +17,8 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Standard Shield permissions for User and Role
-        $entities = ['User', 'Role'];
+        // Standard Shield permissions for entities
+        $entities = ['User', 'Role', 'Category', 'Product', 'LicenseKey', 'Customer', 'WalletTransaction', 'Order', 'PromoCode'];
         $abilities = [
             'ViewAny',
             'View',
@@ -60,21 +60,37 @@ class RolesAndPermissionsSeeder extends Seeder
                 $query->where('name', 'like', 'View%')
                     ->orWhere('name', 'like', 'Create%')
                     ->orWhere('name', 'like', 'Update%')
-                    ->orWhere('name', 'like', 'Delete:User');
+                    ->orWhere('name', 'like', 'Delete:User')
+                    ->orWhere('name', 'like', 'Delete:Category')
+                    ->orWhere('name', 'like', 'Restore:Category')
+                    ->orWhere('name', 'like', 'Delete:Product')
+                    ->orWhere('name', 'like', 'Restore:Product')
+                    ->orWhere('name', 'like', 'Delete:LicenseKey')
+                    ->orWhere('name', 'like', 'Restore:LicenseKey')
+                    ->orWhere('name', 'like', '%:Customer')
+                    ->orWhere('name', 'like', '%:WalletTransaction')
+                    ->orWhere('name', 'like', '%:Order')
+                    ->orWhere('name', 'like', '%:PromoCode');
             })
             ->get();
         $adminRole->syncPermissions($adminPermissions);
 
-        // 3. Manager Role (read users & roles)
+        // 3. Manager Role (manage catalog: categories, products & license keys, orders, promo codes)
         $managerRole = Role::firstOrCreate([
             'name' => 'manager',
             'guard_name' => 'web',
         ]);
-        $managerRole->syncPermissions(
-            Permission::where('guard_name', 'web')
-                ->where('name', 'like', 'View%')
-                ->get()
-        );
+        $managerPermissions = Permission::where('guard_name', 'web')
+            ->where(function ($query) {
+                $query->where('name', 'like', 'View%')
+                    ->orWhere('name', 'like', '%:Category')
+                    ->orWhere('name', 'like', '%:Product')
+                    ->orWhere('name', 'like', '%:LicenseKey')
+                    ->orWhere('name', 'like', '%:Order')
+                    ->orWhere('name', 'like', '%:PromoCode');
+            })
+            ->get();
+        $managerRole->syncPermissions($managerPermissions);
 
         // 4. Viewer Role (read-only)
         $viewerRole = Role::firstOrCreate([
@@ -83,7 +99,7 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
         $viewerRole->syncPermissions(
             Permission::where('guard_name', 'web')
-                ->whereIn('name', ['ViewAny:User', 'View:User', 'ViewAny:Role', 'View:Role'])
+                ->where('name', 'like', 'View%')
                 ->get()
         );
     }
