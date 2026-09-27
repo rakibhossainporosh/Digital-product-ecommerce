@@ -43,6 +43,9 @@ class RolesAndPermissionsSeeder extends Seeder
             }
         }
 
+        // Custom permissions
+        Permission::firstOrCreate(['name' => 'view_reports', 'guard_name' => 'web']);
+
         // 1. Super Admin Role (all permissions)
         $superAdminRole = Role::firstOrCreate([
             'name' => 'super_admin',
@@ -87,7 +90,8 @@ class RolesAndPermissionsSeeder extends Seeder
                     ->orWhere('name', 'like', '%:Product')
                     ->orWhere('name', 'like', '%:LicenseKey')
                     ->orWhere('name', 'like', '%:Order')
-                    ->orWhere('name', 'like', '%:PromoCode');
+                    ->orWhere('name', 'like', '%:PromoCode')
+                    ->orWhere('name', 'view_reports');
             })
             ->get();
         $managerRole->syncPermissions($managerPermissions);

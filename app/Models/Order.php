@@ -116,6 +116,14 @@ class Order extends Model
     }
 
     /**
+     * Alias for productVariant relationship.
+     */
+    public function variant(): BelongsTo
+    {
+        return $this->productVariant();
+    }
+
+    /**
      * All license keys assigned and delivered for this order.
      */
     public function licenseKeys(): HasMany
