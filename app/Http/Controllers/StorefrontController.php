@@ -54,7 +54,7 @@ class StorefrontController extends Controller
                     'icon' => $product->icon,
                     'price_range' => $product->price_range,
                     'min_price' => $minPrice ?? 0,
-                    'formatted_min_price' => '৳ '.number_format((float) ($minPrice ?? 0), 2),
+                    'formatted_min_price' => '৳ '.number_format((float) ($minPrice ?? 0), 0),
                     'variants_count' => $product->variants->count(),
                     'demo_video_url' => $product->demo_video_url,
                     'features' => $product->features_list,

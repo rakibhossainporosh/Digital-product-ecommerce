@@ -128,17 +128,17 @@ class Product extends Model
         $variants = $this->relationLoaded('variants') ? $this->variants : $this->variants()->get();
 
         if ($variants->isEmpty()) {
-            return '৳0.00';
+            return '৳0';
         }
 
         $min = $variants->min(fn (ProductVariant $v): float => (float) ($v->offer_price ?? $v->regular_price));
         $max = $variants->max(fn (ProductVariant $v): float => (float) ($v->offer_price ?? $v->regular_price));
 
         if ($min === $max) {
-            return '৳'.number_format($min, 2);
+            return '৳'.number_format($min, 0);
         }
 
-        return '৳'.number_format($min, 2).' - ৳'.number_format($max, 2);
+        return '৳'.number_format($min, 0).' - ৳'.number_format($max, 0);
     }
 
     /**

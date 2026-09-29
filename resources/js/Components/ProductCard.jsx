@@ -85,11 +85,11 @@ export default function ProductCard({ product }) {
                 {/* Price and Actions Bottom Bar */}
                 <div className="pt-3 border-t border-gray-200 dark:border-gray-800/80 flex items-center justify-between gap-1 sm:gap-2">
                     <div className="shrink-0">
-                        <span className="block text-[9px] sm:text-[10px] text-gray-400 font-mono uppercase whitespace-nowrap">
+                        <span className="block text-[9px] sm:text-[10px] text-gray-400 font-display font-semibold uppercase whitespace-nowrap">
                             {product.variants_count > 1 ? 'Starting from' : 'Price'}
                         </span>
-                        <div className="text-sm sm:text-base font-black font-mono text-red-400 whitespace-nowrap">
-                            {product.formatted_min_price || product.price_range || '৳ 0.00'}
+                        <div className="text-sm sm:text-base font-black font-display text-red-500 whitespace-nowrap">
+                            {product.formatted_min_price || product.price_range || '৳ 0'}
                         </div>
                     </div>
 
