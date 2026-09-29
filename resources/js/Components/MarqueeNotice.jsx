@@ -13,8 +13,11 @@ export default function MarqueeNotice({ notice }) {
                     <span>Notice</span>
                 </div>
                 <div className="overflow-hidden w-full relative whitespace-nowrap">
-                    <div className="inline-block animate-marquee text-xs md:text-sm text-red-100/90 font-medium">
-                        {text} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {text}
+                    <div className="flex w-max animate-marquee text-xs md:text-sm text-red-100/90 font-medium">
+                        <span className="px-8 shrink-0">{text}</span>
+                        <span className="px-8 shrink-0">{text}</span>
+                        <span className="px-8 shrink-0">{text}</span>
+                        <span className="px-8 shrink-0">{text}</span>
                     </div>
                 </div>
             </div>

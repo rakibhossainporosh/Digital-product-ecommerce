@@ -49,7 +49,7 @@ export default function HeroSlider({ sliders = [] }) {
 
     return (
         <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 w-full rounded-2xl md:rounded-3xl overflow-hidden border border-red-500/20 shadow-2xl shadow-red-950/40 bg-gradient-to-br from-slate-900 via-[#0d1527] to-[#080d1a] group">
+            <div className="relative w-full aspect-[21/9] rounded-2xl md:rounded-3xl overflow-hidden border border-red-500/20 shadow-2xl shadow-red-950/40 bg-gradient-to-br from-slate-900 via-[#0d1527] to-[#080d1a] group">
                 
                 {/* Background Banner Image or Graphic Glow */}
                 {currentSlide.image_url ? (
@@ -63,7 +63,7 @@ export default function HeroSlider({ sliders = [] }) {
                         <img 
                             src={currentSlide.image_url} 
                             alt={currentSlide.title}
-                            className="relative z-10 w-full h-full object-contain transition-transform duration-700 group-hover:scale-105 drop-shadow-2xl" 
+                            className="relative z-10 w-full h-full object-fill transition-transform duration-700 group-hover:scale-105 drop-shadow-2xl" 
                         />
                     </>
                 ) : (

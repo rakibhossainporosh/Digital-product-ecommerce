@@ -55,7 +55,7 @@ class SliderResource extends Resource
                             ->image()
                             ->imageEditor()
                             ->imageCropAspectRatio('21:9')
-                            ->helperText('Recommended aspect ratio: 21:9. You can crop the image directly after uploading.')
+                            ->helperText('Upload any size. The system will automatically fit it into the banner area.')
                             ->disk('public')
                             ->directory('sliders')
                             ->required()
