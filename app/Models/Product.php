@@ -164,6 +164,6 @@ class Product extends Model
      */
     public function isDigital(): bool
     {
-        return $this->type === 'digital' || blank($this->type);
+        return $this->type === 'digital_key' || $this->type === 'digital' || blank($this->type);
     }
 }

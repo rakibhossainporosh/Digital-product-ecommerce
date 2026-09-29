@@ -1,9 +1,103 @@
 @import 'tailwindcss';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../js/**/*.{js,jsx,ts,tsx}';
+
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:is(.dark *));
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    --color-cyber-dark: #000000;
+    --color-cyber-card: #0a0a0a;
+    --color-cyber-border: #1a1a1a;
+    --color-cyber-accent: #f82803;
+    --color-cyber-emerald: #10b981;
+}
+
+/* Custom Scrollbar for sleek gaming aesthetic */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #f82803;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: #000000;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #1a1a1a;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #f82803;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark .glass-panel {
+    background: rgba(10, 10, 10, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-card {
+    background: rgba(10, 10, 10, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-card:hover {
+    border-color: rgba(248, 40, 3, 0.35);
+    box-shadow: 0 0 25px -5px rgba(248, 40, 3, 0.15);
+}
+
+/* Neon glow text */
+.text-neon {
+    text-shadow: 0 0 12px rgba(248, 40, 3, 0.5);
+}
+
+/* Animation for marquee */
+@keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 30s linear infinite;
+}
+
+/* Fade-in for modals and expanded sections */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.2s ease-out;
 }

@@ -225,17 +225,25 @@ class PaymentGatewayService
                 'payment_status' => PaymentStatus::Paid,
             ]);
 
-            $fulfillmentResult = $this->fulfillmentService->fulfill($order);
+            if ($order->isService()) {
+                $order->update([
+                    'status' => OrderStatus::Processing,
+                    'fulfillment_status' => FulfillmentStatus::Unfulfilled,
+                    'admin_notes' => trim(($order->admin_notes ? $order->admin_notes."\n" : '').'Service order paid via gateway. Awaiting manual admin fulfillment.'),
+                ]);
+            } else {
+                $fulfillmentResult = $this->fulfillmentService->fulfill($order);
 
-            if (! $fulfillmentResult['success']) {
-                // Stock-out auto refund
-                $this->walletService->refund(
-                    customer: $transaction->customer,
-                    amount: (float) $transaction->amount,
-                    description: 'Auto-refund for order #'.$order->id.' due to stock-out',
-                    referenceId: $transaction->uuid,
-                    metadata: ['order_id' => $order->id, 'reason' => $fulfillmentResult['error']]
-                );
+                if (! $fulfillmentResult['success']) {
+                    // Stock-out auto refund
+                    $this->walletService->refund(
+                        customer: $transaction->customer,
+                        amount: (float) $transaction->amount,
+                        description: 'Auto-refund for order #'.$order->id.' due to stock-out',
+                        referenceId: $transaction->uuid,
+                        metadata: ['order_id' => $order->id, 'reason' => $fulfillmentResult['error']]
+                    );
+                }
             }
         }
     }

@@ -10,7 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -42,21 +42,25 @@ class SliderResource extends Resource
                         TextInput::make('title')
                             ->label('Banner Title / Alt Text')
                             ->maxLength(255)
-                            ->columnSpanFull(),
-
-                        FileUpload::make('image_path')
-                            ->label('Banner Image')
-                            ->image()
-                            ->directory('sliders')
-                            ->required()
-                            ->columnSpanFull(),
+                            ->columnSpan(1),
 
                         TextInput::make('link_url')
                             ->label('Link URL')
                             ->url()
                             ->placeholder('https://example.com/promo')
+                            ->columnSpan(1),
+
+                        FileUpload::make('image_path')
+                            ->label('Banner Image')
+                            ->image()
+                            ->imageEditor()
+                            ->imageCropAspectRatio('21:9')
+                            ->helperText('Recommended aspect ratio: 21:9. You can crop the image directly after uploading.')
+                            ->disk('public')
+                            ->directory('sliders')
+                            ->required()
                             ->columnSpanFull(),
-                    ])->columns(2)->columnSpan(['lg' => fn (?Slider $record) => $record === null ? 3 : 2]),
+                    ])->columns(2)->columnSpan(['lg' => 2]),
 
                 Section::make('Settings')
                     ->schema([

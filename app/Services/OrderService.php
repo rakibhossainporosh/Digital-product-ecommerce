@@ -71,6 +71,7 @@ class OrderService
             'wallet_amount_paid' => 0.00,
             'gateway_amount_paid' => 0.00,
             'customer_notes' => $extra['customer_notes'] ?? null,
+            'service_data' => $extra['service_data'] ?? null,
             'ip_address' => $extra['ip_address'] ?? null,
             'user_agent' => $extra['user_agent'] ?? null,
         ]);
@@ -115,27 +116,37 @@ class OrderService
                 'status' => OrderStatus::Processing,
             ]);
 
-            // 3. Atomically fulfill license keys from stock
-            $fulfillment = $this->fulfillmentService->fulfill($order);
-
-            // 4. Fail-Safe Auto-Refund if stock allocation failed
-            if (! $fulfillment['success']) {
-                $this->walletService->refund(
-                    customer: $customer,
-                    amount: (float) $order->total_amount,
-                    description: "Auto-refund for Order #{$order->order_number}: Stock out",
-                    referenceId: $order->order_number,
-                    metadata: ['reason' => 'auto_refund_stock_unavailable', 'error' => $fulfillment['error']]
-                );
-
-                // Release promo code quota so buyer can reuse it
-                $this->promoCodeService->releaseOrderUsage($order);
-
+            // 3. Digital vs Service Order handling
+            if ($order->isService()) {
+                // Service order: paid, awaiting manual fulfillment by admin
                 $order->update([
-                    'fulfillment_status' => FulfillmentStatus::RefundedToWallet,
-                    'status' => OrderStatus::Refunded,
-                    'admin_notes' => trim(($order->admin_notes ? $order->admin_notes."\n" : '').'Auto-refunded to customer wallet due to stock exhaustion.'),
+                    'fulfillment_status' => FulfillmentStatus::Unfulfilled,
+                    'status' => OrderStatus::Processing,
+                    'admin_notes' => trim(($order->admin_notes ? $order->admin_notes."\n" : '').'Service order paid. Awaiting manual fulfillment by admin.'),
                 ]);
+            } else {
+                // 3b. Atomically fulfill license keys from stock
+                $fulfillment = $this->fulfillmentService->fulfill($order);
+
+                // 4. Fail-Safe Auto-Refund if stock allocation failed
+                if (! $fulfillment['success']) {
+                    $this->walletService->refund(
+                        customer: $customer,
+                        amount: (float) $order->total_amount,
+                        description: "Auto-refund for Order #{$order->order_number}: Stock out",
+                        referenceId: $order->order_number,
+                        metadata: ['reason' => 'auto_refund_stock_unavailable', 'error' => $fulfillment['error']]
+                    );
+
+                    // Release promo code quota so buyer can reuse it
+                    $this->promoCodeService->releaseOrderUsage($order);
+
+                    $order->update([
+                        'fulfillment_status' => FulfillmentStatus::RefundedToWallet,
+                        'status' => OrderStatus::Refunded,
+                        'admin_notes' => trim(($order->admin_notes ? $order->admin_notes."\n" : '').'Auto-refunded to customer wallet due to stock exhaustion.'),
+                    ]);
+                }
             }
 
             return $order->fresh(['licenseKeys', 'customer', 'promoCode']);

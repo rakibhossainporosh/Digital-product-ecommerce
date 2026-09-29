@@ -62,6 +62,14 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Audit log of user login sessions.
+     */
+    public function loginHistories(): HasMany
+    {
+        return $this->hasMany(LoginHistory::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

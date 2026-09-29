@@ -9,6 +9,7 @@ use App\Exceptions\InsufficientWalletBalanceException;
 use App\Models\Customer;
 use App\Models\LicenseKey;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
 use App\Services\OrderFulfillmentService;
@@ -219,4 +220,78 @@ test('order fulfillment service allows retrying fulfillment when stock becomes a
     expect($result2['success'])->toBeTrue()
         ->and($order->fresh()->fulfillment_status)->toBe(FulfillmentStatus::Fulfilled)
         ->and($order->fresh()->status)->toBe(OrderStatus::Completed);
+});
+
+test('service order checkout with wallet keeps order in processing status without allocating keys', function () {
+    $orderService = app(OrderService::class);
+    $customer = Customer::factory()->create(['balance' => 500.00]);
+    $serviceProduct = Product::factory()->create(['type' => 'service']);
+    $variant = ProductVariant::factory()->create([
+        'product_id' => $serviceProduct->id,
+        'price' => 150.00,
+    ]);
+
+    $order = $orderService->createOrder($customer, $variant, 1, PaymentMethod::Wallet);
+    $order->update([
+        'service_data' => [
+            'device_model' => 'Samsung Galaxy S23',
+            'imei' => '123456789012345',
+            'whatsapp_number' => '+8801700000000',
+        ],
+    ]);
+
+    $orderService->checkoutWithWallet($order);
+
+    expect($order->fresh()->payment_status)->toBe(PaymentStatus::Paid)
+        ->and($order->fresh()->status)->toBe(OrderStatus::Processing)
+        ->and($order->fresh()->fulfillment_status)->toBe(FulfillmentStatus::Unfulfilled)
+        ->and($order->fresh()->licenseKeys)->toBeEmpty()
+        ->and((float) $customer->fresh()->balance)->toBe(350.00);
+});
+
+test('admin can manually fulfill service order via fulfillServiceOrder with notes', function () {
+    $fulfillmentService = app(OrderFulfillmentService::class);
+    $serviceProduct = Product::factory()->create(['type' => 'service']);
+    $variant = ProductVariant::factory()->create([
+        'product_id' => $serviceProduct->id,
+    ]);
+
+    $order = Order::factory()->create([
+        'product_id' => $serviceProduct->id,
+        'product_variant_id' => $variant->id,
+        'payment_status' => PaymentStatus::Paid,
+        'status' => OrderStatus::Processing,
+        'fulfillment_status' => FulfillmentStatus::Unfulfilled,
+    ]);
+
+    $result = $fulfillmentService->fulfillServiceOrder($order, 'Rooted via Magisk v27.0');
+
+    expect($result['success'])->toBeTrue()
+        ->and($result['source'])->toBe('manual_service')
+        ->and($order->fresh()->fulfillment_status)->toBe(FulfillmentStatus::Fulfilled)
+        ->and($order->fresh()->status)->toBe(OrderStatus::Completed)
+        ->and($order->fresh()->fulfilled_at)->not->toBeNull()
+        ->and($order->fresh()->admin_notes)->toContain('Rooted via Magisk v27.0');
+});
+
+test('fulfillServiceOrder fails when order is not paid', function () {
+    $fulfillmentService = app(OrderFulfillmentService::class);
+    $serviceProduct = Product::factory()->create(['type' => 'service']);
+    $variant = ProductVariant::factory()->create([
+        'product_id' => $serviceProduct->id,
+    ]);
+
+    $order = Order::factory()->create([
+        'product_id' => $serviceProduct->id,
+        'product_variant_id' => $variant->id,
+        'payment_status' => PaymentStatus::Pending,
+        'status' => OrderStatus::Pending,
+        'fulfillment_status' => FulfillmentStatus::Unfulfilled,
+    ]);
+
+    $result = $fulfillmentService->fulfillServiceOrder($order);
+
+    expect($result['success'])->toBeFalse()
+        ->and($result['error'])->toBe('Cannot fulfill an unpaid service order.')
+        ->and($order->fresh()->fulfillment_status)->toBe(FulfillmentStatus::Unfulfilled);
 });

@@ -180,6 +180,11 @@ class Order extends Model
         return $this->product?->type === 'service';
     }
 
+    public function isDigital(): bool
+    {
+        return ! $this->isService();
+    }
+
     public function canBeFulfilled(): bool
     {
         return $this->isPaid() && ! $this->isFulfilled() && $this->status !== OrderStatus::Cancelled && $this->status !== OrderStatus::Refunded;

@@ -148,7 +148,7 @@ class OrdersTable
                         ->label('Retry Fulfillment')
                         ->icon('heroicon-m-arrow-path')
                         ->color('primary')
-                        ->visible(fn (Order $record): bool => $record->canBeFulfilled())
+                        ->visible(fn (Order $record): bool => $record->canBeFulfilled() && ! $record->isService())
                         ->requiresConfirmation()
                         ->modalHeading('Retry License Key Fulfillment')
                         ->modalDescription('System will attempt to atomically allocate available stock for this order.')
@@ -165,6 +165,38 @@ class OrdersTable
                                 Notification::make()
                                     ->title('Fulfillment Failed')
                                     ->body($result['error'] ?? 'Stock allocation failed.')
+                                    ->danger()
+                                    ->send();
+                            }
+                        }),
+
+                    Action::make('completeService')
+                        ->label('Complete Service')
+                        ->icon('heroicon-m-check-badge')
+                        ->color('success')
+                        ->visible(fn (Order $record): bool => $record->canBeFulfilled() && $record->isService())
+                        ->modalHeading(fn (Order $record): string => "Complete Service: #{$record->order_number}")
+                        ->modalDescription('Mark this manual service as fulfilled and completed for the customer.')
+                        ->modalSubmitActionLabel('Mark as Fulfilled')
+                        ->form([
+                            Textarea::make('completion_notes')
+                                ->label('Completion Notes (Optional)')
+                                ->placeholder('e.g. Device rooted successfully. Handed over credentials via WhatsApp.')
+                                ->rows(3),
+                        ])
+                        ->action(function (Order $record, array $data, OrderFulfillmentService $fulfillmentService): void {
+                            $result = $fulfillmentService->fulfillServiceOrder($record, $data['completion_notes'] ?? null);
+
+                            if ($result['success']) {
+                                Notification::make()
+                                    ->title('Service Fulfilled')
+                                    ->body("Service order #{$record->order_number} marked as fulfilled.")
+                                    ->success()
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Fulfillment Failed')
+                                    ->body($result['error'] ?? 'Could not fulfill service order.')
                                     ->danger()
                                     ->send();
                             }

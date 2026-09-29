@@ -22,7 +22,7 @@ class OrderFulfillmentService
     /**
      * Fulfill license keys for an order using "Local First, Then Supplier API" strategy.
      *
-     * For service-type products, fulfillment is marked immediately without key allocation.
+     * For service-type products, manual fulfillment is executed without license key allocation.
      *
      * @return array{
      *     success: bool,
@@ -31,7 +31,7 @@ class OrderFulfillmentService
      *     error: ?string
      * }
      */
-    public function fulfill(Order $order): array
+    public function fulfill(Order $order, ?string $completionNotes = null): array
     {
         if ($order->isFulfilled()) {
             return [
@@ -51,34 +51,48 @@ class OrderFulfillmentService
             ];
         }
 
-        // Service-type products don't need license key allocation
+        // Service-type products are fulfilled manually
         if ($order->isService()) {
-            return $this->fulfillServiceOrder($order);
+            return $this->fulfillServiceOrder($order, $completionNotes);
         }
 
         return $this->fulfillDigitalOrder($order);
     }
 
     /**
-     * Fulfill a service-type order (no license keys needed).
+     * Manually fulfill a service-type order (no license keys needed).
      *
      * @return array{success: bool, keys: array, source: string, error: ?string}
      */
-    protected function fulfillServiceOrder(Order $order): array
+    public function fulfillServiceOrder(Order $order, ?string $completionNotes = null): array
     {
+        if (! $order->isPaid()) {
+            return [
+                'success' => false,
+                'keys' => [],
+                'source' => 'service',
+                'error' => 'Cannot fulfill an unpaid service order.',
+            ];
+        }
+
+        $note = 'Service order completed/fulfilled by admin.';
+        if (filled($completionNotes)) {
+            $note .= " Note: {$completionNotes}";
+        }
+
         $order->update([
             'fulfillment_status' => FulfillmentStatus::Fulfilled,
             'status' => OrderStatus::Completed,
             'fulfilled_at' => now(),
-            'admin_notes' => trim(($order->admin_notes ? $order->admin_notes."\n" : '').'Service order fulfilled automatically (no license key required).'),
+            'admin_notes' => trim(($order->admin_notes ? $order->admin_notes."\n" : '').$note),
         ]);
 
-        Log::info("Order #{$order->order_number}: Service-type order fulfilled without key allocation.");
+        Log::info("Order #{$order->order_number}: Service-type order fulfilled manually.");
 
         return [
             'success' => true,
             'keys' => [],
-            'source' => 'service',
+            'source' => 'manual_service',
             'error' => null,
         ];
     }

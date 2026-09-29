@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\PaymentTransactions\Schemas;
 
-use Filament\Schemas\Components\KeyValueEntry;
+use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\TextEntry;
 use Filament\Schemas\Schema;
 
 class PaymentTransactionInfolist
