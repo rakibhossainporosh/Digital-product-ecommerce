@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Orders\Schemas;
 
 use App\Models\Order;
+use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -136,6 +137,17 @@ class OrderInfolist
                                     ->placeholder('No notes recorded')
                                     ->columnSpan(3),
                             ]),
+                    ]),
+
+                Section::make('Service Details (Manual Fulfillment)')
+                    ->icon('heroicon-m-wrench-screwdriver')
+                    ->visible(fn (Order $record): bool => ! empty($record->service_data))
+                    ->schema([
+                        KeyValueEntry::make('service_data')
+                            ->label('Service Request Form Data')
+                            ->keyLabel('Field')
+                            ->valueLabel('Input')
+                            ->columnSpanFull(),
                     ]),
             ]);
     }

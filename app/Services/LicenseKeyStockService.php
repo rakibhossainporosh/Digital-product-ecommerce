@@ -81,6 +81,58 @@ class LicenseKeyStockService
     }
 
     /**
+     * Atomically allocate up to $maxQuantity available license keys.
+     * Does not throw if fewer keys than requested are available; returns what was allocated.
+     *
+     * @return Collection<int, LicenseKey>
+     */
+    public function allocateAvailableKeys(int $variantId, int $maxQuantity, ?int $orderId = null, ?int $orderItemId = null): Collection
+    {
+        if ($maxQuantity <= 0) {
+            return new Collection;
+        }
+
+        return DB::transaction(function () use ($variantId, $maxQuantity, $orderId, $orderItemId): Collection {
+            $keys = LicenseKey::query()
+                ->where('product_variant_id', $variantId)
+                ->where('status', LicenseKeyStatus::Available)
+                ->lockForUpdate()
+                ->limit($maxQuantity)
+                ->get();
+
+            foreach ($keys as $key) {
+                $key->update([
+                    'status' => LicenseKeyStatus::Sold,
+                    'order_id' => $orderId,
+                    'order_item_id' => $orderItemId,
+                    'sold_at' => now(),
+                ]);
+            }
+
+            return $keys;
+        });
+    }
+
+    /**
+     * Release previously allocated keys back to available inventory.
+     *
+     * @param  iterable<LicenseKey>  $keys
+     */
+    public function releaseAllocatedKeys(iterable $keys): void
+    {
+        DB::transaction(function () use ($keys): void {
+            foreach ($keys as $key) {
+                $key->update([
+                    'status' => LicenseKeyStatus::Available,
+                    'order_id' => null,
+                    'order_item_id' => null,
+                    'sold_at' => null,
+                ]);
+            }
+        });
+    }
+
+    /**
      * Atomically reserve a key during checkout pending payment.
      *
      * @throws RuntimeException

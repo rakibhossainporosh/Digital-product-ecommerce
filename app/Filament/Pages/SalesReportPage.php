@@ -40,7 +40,7 @@ class SalesReportPage extends Page
 
     public ?int $variantId = null;
 
-    public string $activeRightTab = 'sales'; // 'sales' or 'deposits'
+    public string $activeTab = 'direct_sales'; // 'direct_sales', 'wallet_sales', or 'wallet_deposits'
 
     public static function canAccess(): bool
     {
@@ -74,9 +74,9 @@ class SalesReportPage extends Page
         $this->resetPage('deposits_page');
     }
 
-    public function setRightTab(string $tab): void
+    public function setActiveTab(string $tab): void
     {
-        $this->activeRightTab = in_array($tab, ['sales', 'deposits'], true) ? $tab : 'sales';
+        $this->activeTab = in_array($tab, ['direct_sales', 'wallet_sales', 'wallet_deposits'], true) ? $tab : 'direct_sales';
     }
 
     public function resetFilters(): void
@@ -85,7 +85,7 @@ class SalesReportPage extends Page
         $this->endDate = now()->toDateString();
         $this->productId = null;
         $this->variantId = null;
-        $this->activeRightTab = 'sales';
+        $this->activeTab = 'direct_sales';
 
         $this->resetPage('direct_page');
         $this->resetPage('wallet_page');

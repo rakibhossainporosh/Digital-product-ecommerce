@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 
 #[Fillable([
     'category_id',
+    'type',
     'name',
     'slug',
     'icon',
@@ -148,5 +149,21 @@ class Product extends Model
     public function getFeaturesListAttribute(): array
     {
         return is_array($this->features) ? array_values(array_filter($this->features)) : [];
+    }
+
+    /**
+     * Check if product is a non-inventory service (e.g. manual top-up, custom service).
+     */
+    public function isService(): bool
+    {
+        return $this->type === 'service';
+    }
+
+    /**
+     * Check if product is a digital license key product.
+     */
+    public function isDigital(): bool
+    {
+        return $this->type === 'digital' || blank($this->type);
     }
 }

@@ -45,6 +45,7 @@ class Order extends Model
         'ip_address',
         'user_agent',
         'customer_notes',
+        'service_data',
         'admin_notes',
         'fulfilled_at',
     ];
@@ -57,6 +58,7 @@ class Order extends Model
     protected function casts(): array
     {
         return [
+            'service_data' => 'array',
             'quantity' => 'integer',
             'unit_price' => 'decimal:2',
             'subtotal' => 'decimal:2',
@@ -171,6 +173,11 @@ class Order extends Model
     public function isFulfilled(): bool
     {
         return $this->fulfillment_status === FulfillmentStatus::Fulfilled;
+    }
+
+    public function isService(): bool
+    {
+        return $this->product?->type === 'service';
     }
 
     public function canBeFulfilled(): bool

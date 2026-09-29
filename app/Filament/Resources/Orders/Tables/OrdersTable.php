@@ -169,6 +169,18 @@ class OrdersTable
                                     ->send();
                             }
                         }),
+                    Action::make('whatsappCustomer')
+                        ->label('WhatsApp Customer')
+                        ->icon('heroicon-m-chat-bubble-left-ellipsis')
+                        ->color('success')
+                        ->visible(fn (Order $record): bool => isset($record->service_data['whatsapp_number']) || ! empty($record->customer->whatsapp))
+                        ->url(function (Order $record): string {
+                            $number = $record->service_data['whatsapp_number'] ?? $record->customer->whatsapp ?? '';
+                            $cleanNumber = preg_replace('/[^0-9]/', '', $number);
+
+                            return "https://wa.me/{$cleanNumber}?text=Hello regarding your order #{$record->order_number}";
+                        })
+                        ->openUrlInNewTab(),
 
                     Action::make('refundToWallet')
                         ->label('Refund to Customer Wallet')

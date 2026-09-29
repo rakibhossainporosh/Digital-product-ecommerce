@@ -45,7 +45,7 @@ class ProductForm
                                             })
                                             ->columnSpan([
                                                 'default' => 12,
-                                                'md' => 7,
+                                                'md' => 12,
                                             ]),
 
                                         Select::make('category_id')
@@ -57,7 +57,21 @@ class ProductForm
                                             ->prefixIcon('heroicon-m-folder')
                                             ->columnSpan([
                                                 'default' => 12,
-                                                'md' => 5,
+                                                'md' => 6,
+                                            ]),
+
+                                        Select::make('type')
+                                            ->label('Product Type')
+                                            ->options([
+                                                'digital_key' => 'Digital License Key',
+                                                'service' => 'Manual Service (e.g. Rooting)',
+                                            ])
+                                            ->default('digital_key')
+                                            ->required()
+                                            ->prefixIcon('heroicon-m-squares-plus')
+                                            ->columnSpan([
+                                                'default' => 12,
+                                                'md' => 6,
                                             ]),
                                     ]),
 

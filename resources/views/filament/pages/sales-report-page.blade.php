@@ -222,21 +222,45 @@
         .sr-pagination { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(148,163,184,0.1); }
     </style>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+    <x-filament::section>
+        <x-slot name="heading">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <x-filament::button
+                    :color="$activeTab === 'direct_sales' ? 'info' : 'gray'"
+                    size="sm"
+                    wire:click="setActiveTab('direct_sales')"
+                    icon="heroicon-m-globe-alt"
+                >
+                    Direct Online Sales ({{ $data['directOrdersCount'] }})
+                </x-filament::button>
+                
+                <x-filament::button
+                    :color="$activeTab === 'wallet_sales' ? 'warning' : 'gray'"
+                    size="sm"
+                    wire:click="setActiveTab('wallet_sales')"
+                    icon="heroicon-m-wallet"
+                >
+                    Wallet Sales ({{ $data['walletOrdersCount'] }})
+                </x-filament::button>
 
-        {{-- ── LEFT: Direct Online Sales Table ── --}}
-        <x-filament::section>
-            <x-slot name="heading">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <x-heroicon-m-globe-alt style="width: 20px; height: 20px; color: #3b82f6;" />
-                    <span>Direct Online Sales</span>
-                    <x-filament::badge color="info" size="sm">{{ $data['directOrdersCount'] }}</x-filament::badge>
-                </div>
-            </x-slot>
-            <x-slot name="description">
+                @if(!$data['selectedProduct'])
+                    <x-filament::button
+                        :color="$activeTab === 'wallet_deposits' ? 'success' : 'gray'"
+                        size="sm"
+                        wire:click="setActiveTab('wallet_deposits')"
+                        icon="heroicon-m-banknotes"
+                    >
+                        Wallet Deposits ({{ $data['walletDepositsCount'] }})
+                    </x-filament::button>
+                @endif
+            </div>
+        </x-slot>
+
+        @if($activeTab === 'direct_sales')
+            {{-- ── Direct Online Sales Table ── --}}
+            <div style="margin-bottom: 12px; font-size: 13px; color: #6b7280;">
                 Total: <strong style="color: #3b82f6;">৳ {{ number_format($data['totalDirectSales'], 2) }}</strong> from {{ $data['directOrdersCount'] }} completed orders
-            </x-slot>
-
+            </div>
             <div style="overflow-x: auto; margin: -16px; margin-top: 0;">
                 <table class="sr-table">
                     <thead>
@@ -293,182 +317,146 @@
                     </tbody>
                 </table>
             </div>
-
             @if($data['directOrders']->hasPages())
                 <div class="sr-pagination">
                     {{ $data['directOrders']->links() }}
                 </div>
             @endif
-        </x-filament::section>
 
-        {{-- ── RIGHT: Wallet Sales / Deposits Table ── --}}
-        <x-filament::section>
-            <x-slot name="heading">
-                @if($data['selectedProduct'])
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <x-heroicon-m-wallet style="width: 20px; height: 20px; color: #f59e0b;" />
-                        <span>Wallet Sales</span>
-                        <x-filament::badge color="warning" size="sm">{{ $data['walletOrdersCount'] }}</x-filament::badge>
-                    </div>
-                @else
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <x-filament::button
-                            :color="$activeRightTab === 'sales' ? 'warning' : 'gray'"
-                            size="xs"
-                            wire:click="setRightTab('sales')"
-                            icon="heroicon-m-wallet"
-                        >
-                            Wallet Sales ({{ $data['walletOrdersCount'] }})
-                        </x-filament::button>
-                        <x-filament::button
-                            :color="$activeRightTab === 'deposits' ? 'success' : 'gray'"
-                            size="xs"
-                            wire:click="setRightTab('deposits')"
-                            icon="heroicon-m-banknotes"
-                        >
-                            Wallet Deposits ({{ $data['walletDepositsCount'] }})
-                        </x-filament::button>
-                    </div>
-                @endif
-            </x-slot>
-            <x-slot name="description">
-                @if($data['selectedProduct'] || $activeRightTab === 'sales')
-                    Total: <strong style="color: #f59e0b;">৳ {{ number_format($data['totalWalletSales'], 2) }}</strong> from {{ $data['walletOrdersCount'] }} wallet orders
-                @else
-                    Total: <strong style="color: #8b5cf6;">৳ {{ number_format($data['totalWalletDeposits'], 2) }}</strong> from {{ $data['walletDepositsCount'] }} transactions
-                @endif
-            </x-slot>
-
-            @if($data['selectedProduct'] || $activeRightTab === 'sales')
-                {{-- ── Wallet Sales Table ── --}}
-                <div style="overflow-x: auto; margin: -16px; margin-top: 0;">
-                    <table class="sr-table">
-                        <thead>
+        @elseif($activeTab === 'wallet_sales')
+            {{-- ── Wallet Sales Table ── --}}
+            <div style="margin-bottom: 12px; font-size: 13px; color: #6b7280;">
+                Total: <strong style="color: #f59e0b;">৳ {{ number_format($data['totalWalletSales'], 2) }}</strong> from {{ $data['walletOrdersCount'] }} wallet orders
+            </div>
+            <div style="overflow-x: auto; margin: -16px; margin-top: 0;">
+                <table class="sr-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 115px;">Date</th>
+                            <th style="min-width: 140px;">Order #</th>
+                            @if(!$data['selectedProduct'])
+                                <th style="min-width: 140px;">Product</th>
+                            @endif
+                            <th style="min-width: 150px;">Customer</th>
+                            <th style="width: 110px;">Method</th>
+                            <th class="text-right" style="width: 110px;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($data['walletOrders'] as $order)
                             <tr>
-                                <th style="width: 115px;">Date</th>
-                                <th style="min-width: 140px;">Order #</th>
-                                @if(!$data['selectedProduct'])
-                                    <th style="min-width: 140px;">Product</th>
-                                @endif
-                                <th style="min-width: 150px;">Customer</th>
-                                <th style="width: 110px;">Method</th>
-                                <th class="text-right" style="width: 110px;">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($data['walletOrders'] as $order)
-                                <tr>
-                                    <td>
-                                        <span class="sr-date">{{ $order->created_at->format('d M Y') }}</span>
-                                        <div style="font-size: 10px; color: #64748b;">{{ $order->created_at->format('h:i A') }}</div>
-                                    </td>
-                                    <td>
-                                        <div class="sr-order-num amber">#{{ $order->order_number }}</div>
-                                        @if($order->productVariant?->duration_name)
-                                            <div class="sr-variant">{{ $order->productVariant->duration_name }}</div>
-                                        @endif
-                                    </td>
-                                    @if(!$data['selectedProduct'])
-                                        <td>
-                                            <div class="sr-product" title="{{ $order->product?->name }}">{{ $order->product?->name ?? 'Deleted Product' }}</div>
-                                        </td>
+                                <td>
+                                    <span class="sr-date">{{ $order->created_at->format('d M Y') }}</span>
+                                    <div style="font-size: 10px; color: #64748b;">{{ $order->created_at->format('h:i A') }}</div>
+                                </td>
+                                <td>
+                                    <div class="sr-order-num amber">#{{ $order->order_number }}</div>
+                                    @if($order->productVariant?->duration_name)
+                                        <div class="sr-variant">{{ $order->productVariant->duration_name }}</div>
                                     @endif
+                                </td>
+                                @if(!$data['selectedProduct'])
                                     <td>
-                                        <div class="sr-customer-name">{{ $order->customer?->name ?? 'Guest' }}</div>
-                                        @if($order->customer?->email)
-                                            <div class="sr-customer-email" title="{{ $order->customer->email }}">{{ $order->customer->email }}</div>
-                                        @endif
+                                        <div class="sr-product" title="{{ $order->product?->name }}">{{ $order->product?->name ?? 'Deleted Product' }}</div>
                                     </td>
-                                    <td>
-                                        <x-filament::badge color="warning" size="sm">
-                                            {{ $order->wallet_amount_paid > 0 && $order->gateway_amount_paid > 0 ? 'Wallet Portion' : 'Wallet Balance' }}
-                                        </x-filament::badge>
-                                    </td>
-                                    <td class="text-right">
-                                        <span class="sr-amount amber">৳ {{ number_format($order->wallet_amount_paid > 0 ? $order->wallet_amount_paid : $order->total_amount, 2) }}</span>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="{{ $data['selectedProduct'] ? 5 : 6 }}" class="sr-empty">
-                                        <div class="sr-empty-icon">💳</div>
-                                        <div class="sr-empty-text">No wallet sales found in this period.</div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                @if($data['walletOrders']->hasPages())
-                    <div class="sr-pagination">
-                        {{ $data['walletOrders']->links() }}
-                    </div>
-                @endif
-            @elseif($data['walletTransactions'])
-                {{-- ── Wallet Deposits Table ── --}}
-                <div style="overflow-x: auto; margin: -16px; margin-top: 0;">
-                    <table class="sr-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 115px;">Date</th>
-                                <th style="min-width: 160px;">Customer</th>
-                                <th style="min-width: 180px;">Type / Description</th>
-                                <th class="text-right" style="width: 120px;">Amount</th>
+                                @endif
+                                <td>
+                                    <div class="sr-customer-name">{{ $order->customer?->name ?? 'Guest' }}</div>
+                                    @if($order->customer?->email)
+                                        <div class="sr-customer-email" title="{{ $order->customer->email }}">{{ $order->customer->email }}</div>
+                                    @endif
+                                </td>
+                                <td>
+                                    <x-filament::badge color="warning" size="sm">
+                                        {{ $order->wallet_amount_paid > 0 && $order->gateway_amount_paid > 0 ? 'Wallet Portion' : 'Wallet Balance' }}
+                                    </x-filament::badge>
+                                </td>
+                                <td class="text-right">
+                                    <span class="sr-amount amber">৳ {{ number_format($order->wallet_amount_paid > 0 ? $order->wallet_amount_paid : $order->total_amount, 2) }}</span>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($data['walletTransactions'] as $txn)
-                                <tr>
-                                    <td>
-                                        <span class="sr-date">{{ $txn->created_at->format('d M Y') }}</span>
-                                        <div style="font-size: 10px; color: #64748b;">{{ $txn->created_at->format('h:i A') }}</div>
-                                    </td>
-                                    <td>
-                                        <div class="sr-customer-name">{{ $txn->customer?->name ?? 'N/A' }}</div>
-                                        @if($txn->customer?->email)
-                                            <div class="sr-customer-email" title="{{ $txn->customer->email }}">{{ $txn->customer->email }}</div>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($txn->type === \App\Enums\WalletTransactionType::AdminAdjust)
-                                            @if($txn->direction === \App\Enums\TransactionDirection::Debit)
-                                                <x-filament::badge color="danger" size="sm">Admin Deduct</x-filament::badge>
-                                            @else
-                                                <x-filament::badge color="success" size="sm">Admin Add</x-filament::badge>
-                                            @endif
-                                        @else
-                                            <x-filament::badge color="info" size="sm">Deposit</x-filament::badge>
-                                        @endif
-                                        @if($txn->description)
-                                            <div class="sr-txn-desc" title="{{ $txn->description }}">{{ $txn->description }}</div>
-                                        @endif
-                                    </td>
-                                    <td class="text-right">
-                                        <span class="sr-amount {{ $txn->direction === \App\Enums\TransactionDirection::Debit ? 'red' : 'purple' }}">
-                                            {{ $txn->direction === \App\Enums\TransactionDirection::Debit ? '-' : '+' }}৳ {{ number_format(abs((float) $txn->amount), 2) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="sr-empty">
-                                        <div class="sr-empty-icon">🏦</div>
-                                        <div class="sr-empty-text">No wallet deposits found in this period.</div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                        @empty
+                            <tr>
+                                <td colspan="{{ $data['selectedProduct'] ? 5 : 6 }}" class="sr-empty">
+                                    <div class="sr-empty-icon">💳</div>
+                                    <div class="sr-empty-text">No wallet sales found in this period.</div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            @if($data['walletOrders']->hasPages())
+                <div class="sr-pagination">
+                    {{ $data['walletOrders']->links() }}
                 </div>
-
-                @if($data['walletTransactions']->hasPages())
-                    <div class="sr-pagination">
-                        {{ $data['walletTransactions']->links() }}
-                    </div>
-                @endif
             @endif
-        </x-filament::section>
-    </div>
+
+        @elseif($activeTab === 'wallet_deposits' && isset($data['walletTransactions']))
+            {{-- ── Wallet Deposits Table ── --}}
+            <div style="margin-bottom: 12px; font-size: 13px; color: #6b7280;">
+                Total: <strong style="color: #8b5cf6;">৳ {{ number_format($data['totalWalletDeposits'], 2) }}</strong> from {{ $data['walletDepositsCount'] }} transactions
+            </div>
+            <div style="overflow-x: auto; margin: -16px; margin-top: 0;">
+                <table class="sr-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 115px;">Date</th>
+                            <th style="min-width: 160px;">Customer</th>
+                            <th style="min-width: 180px;">Type / Description</th>
+                            <th class="text-right" style="width: 120px;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($data['walletTransactions'] as $txn)
+                            <tr>
+                                <td>
+                                    <span class="sr-date">{{ $txn->created_at->format('d M Y') }}</span>
+                                    <div style="font-size: 10px; color: #64748b;">{{ $txn->created_at->format('h:i A') }}</div>
+                                </td>
+                                <td>
+                                    <div class="sr-customer-name">{{ $txn->customer?->name ?? 'N/A' }}</div>
+                                    @if($txn->customer?->email)
+                                        <div class="sr-customer-email" title="{{ $txn->customer->email }}">{{ $txn->customer->email }}</div>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($txn->type === \App\Enums\WalletTransactionType::AdminAdjust)
+                                        @if($txn->direction === \App\Enums\TransactionDirection::Debit)
+                                            <x-filament::badge color="danger" size="sm">Admin Deduct</x-filament::badge>
+                                        @else
+                                            <x-filament::badge color="success" size="sm">Admin Add</x-filament::badge>
+                                        @endif
+                                    @else
+                                        <x-filament::badge color="info" size="sm">Deposit</x-filament::badge>
+                                    @endif
+                                    @if($txn->description)
+                                        <div class="sr-txn-desc" title="{{ $txn->description }}">{{ $txn->description }}</div>
+                                    @endif
+                                </td>
+                                <td class="text-right">
+                                    <span class="sr-amount {{ $txn->direction === \App\Enums\TransactionDirection::Debit ? 'red' : 'purple' }}">
+                                        {{ $txn->direction === \App\Enums\TransactionDirection::Debit ? '-' : '+' }}৳ {{ number_format(abs((float) $txn->amount), 2) }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="sr-empty">
+                                    <div class="sr-empty-icon">🏦</div>
+                                    <div class="sr-empty-text">No wallet deposits found in this period.</div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            @if($data['walletTransactions']->hasPages())
+                <div class="sr-pagination">
+                    {{ $data['walletTransactions']->links() }}
+                </div>
+            @endif
+        @endif
+    </x-filament::section>
 
 </x-filament-panels::page>
