@@ -201,17 +201,29 @@ export default function ProductTopup({ product }) {
                                         </div>
                                     )}
 
-                                    {product.demo_video_url && (
-                                        <div className="pt-2">
-                                            <a
-                                                href={product.demo_video_url}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#f82803]/20 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-[#f82803]/30 transition-colors"
-                                            >
-                                                <Play className="w-4 h-4 fill-red-400" />
-                                                <span>Watch Installation / Setup Tutorial</span>
-                                            </a>
+                                    {(product.demo_video_url || product.has_setup_file) && (
+                                        <div className="pt-2 flex flex-wrap gap-3">
+                                            {product.demo_video_url && (
+                                                <a
+                                                    href={product.demo_video_url}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#f82803]/20 text-red-400 border border-red-500/30 text-xs font-semibold hover:bg-[#f82803]/30 transition-colors"
+                                                >
+                                                    <Play className="w-4 h-4 fill-red-400" />
+                                                    <span>Watch Setup Tutorial</span>
+                                                </a>
+                                            )}
+                                            {product.has_setup_file && (
+                                                <a
+                                                    href={product.setup_file_url}
+                                                    download
+                                                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs font-semibold hover:bg-blue-500/30 transition-colors"
+                                                >
+                                                    <ArrowRight className="w-4 h-4" />
+                                                    <span>Download App / Setup</span>
+                                                </a>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -551,7 +563,12 @@ export default function ProductTopup({ product }) {
                             )}
 
                             {/* Main CTA Order Button */}
-                            {customer ? (
+                            {product.is_maintenance ? (
+                                <div className="p-4 rounded-xl bg-gray-800/80 border border-gray-700 text-gray-300 text-sm text-center font-bold flex flex-col items-center gap-2">
+                                    <Wrench className="w-6 h-6 text-gray-400" />
+                                    This product is currently under maintenance. Please try again later.
+                                </div>
+                            ) : customer ? (
                                 <button
                                     type="button"
                                     onClick={handleCheckout}

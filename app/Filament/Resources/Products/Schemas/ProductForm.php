@@ -136,10 +136,34 @@ class ProductForm
                                             ->offIcon('heroicon-m-x-mark')
                                             ->helperText('Visible to customers when enabled.')
                                             ->columnSpan([
-                                                'default' => 12,
-                                                'md' => 5,
+                                                'default' => 6,
+                                                'md' => 2,
+                                            ]),
+
+                                        Toggle::make('is_maintenance')
+                                            ->label('Maintenance Mode')
+                                            ->inline(false)
+                                            ->default(false)
+                                            ->onColor('warning')
+                                            ->offColor('gray')
+                                            ->onIcon('heroicon-m-wrench-screwdriver')
+                                            ->offIcon('heroicon-m-minus')
+                                            ->helperText('Disable purchases temporarily.')
+                                            ->columnSpan([
+                                                'default' => 6,
+                                                'md' => 3,
                                             ]),
                                     ]),
+
+                                FileUpload::make('setup_file_path')
+                                    ->label('Product Setup File (Optional)')
+                                    ->directory('product-setups')
+                                    ->disk('public')
+                                    ->preserveFilenames()
+                                    ->helperText('Upload an APK, ZIP, or EXE file for this product.')
+                                    ->maxSize(51200) // 50MB max by default
+                                    ->acceptedFileTypes(['application/vnd.android.package-archive', 'application/zip', 'application/x-zip-compressed', 'application/x-msdownload', 'application/x-ms-dos-executable'])
+                                    ->columnSpanFull(),
                             ]),
 
                         // Tab 2: Duration Variants & Pricing

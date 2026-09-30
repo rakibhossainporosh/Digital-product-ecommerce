@@ -23,6 +23,8 @@ use Illuminate\Support\Str;
     'description',
     'features',
     'status',
+    'is_maintenance',
+    'setup_file_path',
     'sort_order',
 ])]
 class Product extends Model
@@ -40,6 +42,7 @@ class Product extends Model
         return [
             'features' => 'array',
             'status' => 'boolean',
+            'is_maintenance' => 'boolean',
             'sort_order' => 'integer',
         ];
     }

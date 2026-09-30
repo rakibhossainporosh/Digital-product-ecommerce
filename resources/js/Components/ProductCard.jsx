@@ -42,7 +42,11 @@ export default function ProductCard({ product }) {
                         </span>
                     )}
 
-                    {isService ? (
+                    {product.is_maintenance ? (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-500/20 text-gray-300 border border-gray-500/30 backdrop-blur-md flex items-center gap-1">
+                            <Wrench className="w-3 h-3" /> Maintenance
+                        </span>
+                    ) : isService ? (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 backdrop-blur-md">
                             Custom Service
                         </span>
@@ -106,13 +110,23 @@ export default function ProductCard({ product }) {
                             </a>
                         )}
 
-                        <Link
-                            href={`/product/${product.slug}`}
-                            className="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-br from-[#f82803] to-[#730505] hover:from-[#ff411a] hover:to-[#8f0909] text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-md shadow-red-500/20 transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
-                        >
-                            <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
-                            <span className="whitespace-nowrap">Buy Now</span>
-                        </Link>
+                        {product.is_maintenance ? (
+                            <button
+                                disabled
+                                className="px-3 sm:px-4 py-2 rounded-xl bg-gray-700/50 text-gray-400 font-bold text-xs sm:text-sm flex items-center gap-1.5 cursor-not-allowed whitespace-nowrap"
+                            >
+                                <Wrench className="w-3.5 h-3.5 shrink-0" />
+                                <span className="whitespace-nowrap">Updating</span>
+                            </button>
+                        ) : (
+                            <Link
+                                href={`/product/${product.slug}`}
+                                className="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-br from-[#f82803] to-[#730505] hover:from-[#ff411a] hover:to-[#8f0909] text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-md shadow-red-500/20 transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
+                            >
+                                <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
+                                <span className="whitespace-nowrap">Buy Now</span>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>
