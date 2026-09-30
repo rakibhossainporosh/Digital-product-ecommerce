@@ -217,7 +217,8 @@ export default function ProductTopup({ product }) {
                                             {product.has_setup_file && (
                                                 <a
                                                     href={product.setup_file_url}
-                                                    download
+                                                    target="_blank"
+                                                    rel="noreferrer"
                                                     className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs font-semibold hover:bg-blue-500/30 transition-colors"
                                                 >
                                                     <ArrowRight className="w-4 h-4" />

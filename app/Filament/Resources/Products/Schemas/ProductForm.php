@@ -155,15 +155,32 @@ class ProductForm
                                             ]),
                                     ]),
 
-                                FileUpload::make('setup_file_path')
-                                    ->label('Product Setup File (Optional)')
-                                    ->directory('product-setups')
-                                    ->disk('public')
-                                    ->preserveFilenames()
-                                    ->helperText('Upload an APK, ZIP, or EXE file for this product.')
-                                    ->maxSize(51200) // 50MB max by default
-                                    ->acceptedFileTypes(['application/vnd.android.package-archive', 'application/zip', 'application/x-zip-compressed', 'application/x-msdownload', 'application/x-ms-dos-executable'])
-                                    ->columnSpanFull(),
+                                Grid::make(12)
+                                    ->schema([
+                                        FileUpload::make('setup_file_path')
+                                            ->label('Product Setup File (Optional)')
+                                            ->directory('product-setups')
+                                            ->disk('public')
+                                            ->preserveFilenames()
+                                            ->helperText('Upload an APK, ZIP, or EXE file for this product.')
+                                            ->maxSize(51200)
+                                            ->acceptedFileTypes(['application/vnd.android.package-archive', 'application/zip', 'application/x-zip-compressed', 'application/x-msdownload', 'application/x-ms-dos-executable'])
+                                            ->columnSpan([
+                                                'default' => 12,
+                                                'md' => 6,
+                                            ]),
+
+                                        TextInput::make('setup_link')
+                                            ->label('Or Setup Link (Optional)')
+                                            ->placeholder('https://drive.google.com/... or https://mega.nz/...')
+                                            ->url()
+                                            ->prefixIcon('heroicon-m-link')
+                                            ->helperText('Provide an external link instead of uploading a file.')
+                                            ->columnSpan([
+                                                'default' => 12,
+                                                'md' => 6,
+                                            ]),
+                                    ]),
                             ]),
 
                         // Tab 2: Duration Variants & Pricing

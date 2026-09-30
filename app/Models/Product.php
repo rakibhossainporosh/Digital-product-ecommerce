@@ -25,6 +25,7 @@ use Illuminate\Support\Str;
     'status',
     'is_maintenance',
     'setup_file_path',
+    'setup_link',
     'sort_order',
 ])]
 class Product extends Model
