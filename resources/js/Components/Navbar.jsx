@@ -48,10 +48,10 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16 md:h-20">
                     {/* Logo & Brand */}
-                    <div className="flex items-center gap-6">
-                        <Link href="/" className="flex items-center gap-3 group">
+                    <div className="flex items-center gap-6 min-w-0 flex-1">
+                        <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group min-w-0">
                             {settings?.site_logo ? (
-                                <div className="h-10 w-10 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 group-hover:border-red-500/50 transition-colors bg-white dark:bg-[#111827] flex items-center justify-center p-1 shrink-0">
+                                <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 group-hover:border-red-500/50 transition-colors bg-white dark:bg-[#111827] flex items-center justify-center p-1 shrink-0">
                                     <img 
                                         src={settings.site_logo} 
                                         alt={settings?.app_name || 'Logo'} 
@@ -59,17 +59,17 @@ export default function Navbar() {
                                     />
                                 </div>
                             ) : (
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#f82803] to-[#730505] p-0.5 shadow-lg shadow-red-500/20 group-hover:shadow-red-500/40 transition-shadow shrink-0">
+                                <div className="h-9 w-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#f82803] to-[#730505] p-0.5 shadow-lg shadow-red-500/20 group-hover:shadow-red-500/40 transition-shadow shrink-0">
                                     <div className="w-full h-full bg-white dark:bg-[#0b0f19] rounded-[10px] flex items-center justify-center">
-                                        <ShoppingBag className="w-5 h-5 text-[#f82803] dark:text-red-400 group-hover:scale-110 transition-transform duration-300" />
+                                        <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-[#f82803] dark:text-red-400 group-hover:scale-110 transition-transform duration-300" />
                                     </div>
                                 </div>
                             )}
-                            <div className="flex flex-col justify-center">
-                                <span className="text-xl font-bold tracking-tight font-display text-gray-900 dark:text-white leading-tight group-hover:text-[#f82803] dark:group-hover:text-red-400 transition-colors">
+                            <div className="flex flex-col justify-center min-w-0">
+                                <span className="text-[17px] sm:text-xl font-bold tracking-tight font-display text-gray-900 dark:text-white leading-tight group-hover:text-[#f82803] dark:group-hover:text-red-400 transition-colors truncate">
                                     {settings?.app_name || 'Panel Sell'}
                                 </span>
-                                <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wider uppercase leading-none mt-0.5">
+                                <span className="hidden sm:block text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wider uppercase leading-none mt-0.5 truncate">
                                     {settings?.app_tagline ? settings.app_tagline.slice(0, 30) : 'Official Store'}
                                 </span>
                             </div>
