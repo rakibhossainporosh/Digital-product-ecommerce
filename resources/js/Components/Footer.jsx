@@ -12,11 +12,21 @@ export default function Footer() {
                     {/* Brand Column */}
                     <div className="md:col-span-2 space-y-4">
                         <div className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#f82803] to-[#730505] p-0.5">
-                                <div className="w-full h-full bg-gray-50 dark:bg-black rounded-[10px] flex items-center justify-center">
-                                    <ShoppingBag className="w-4 h-4 text-[#f82803]" />
+                            {settings?.site_logo ? (
+                                <div className="w-9 h-9 rounded-xl overflow-hidden border border-red-500/20 bg-white dark:bg-[#0b0f19] flex items-center justify-center p-1 shrink-0">
+                                    <img 
+                                        src={settings.site_logo} 
+                                        alt={settings?.app_name || 'Logo'} 
+                                        className="w-full h-full object-contain"
+                                    />
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#f82803] to-[#730505] p-0.5 shrink-0">
+                                    <div className="w-full h-full bg-gray-50 dark:bg-black rounded-[10px] flex items-center justify-center">
+                                        <ShoppingBag className="w-4 h-4 text-[#f82803]" />
+                                    </div>
+                                </div>
+                            )}
                             <span className="text-xl font-bold font-display text-gray-900 dark:text-white">
                                 {settings?.app_name || 'Panel Sell'}
                             </span>

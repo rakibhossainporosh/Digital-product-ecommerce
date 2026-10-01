@@ -55,7 +55,7 @@ export default function CustomerReviews() {
                 const container = scrollContainerRef.current;
                 const scrollWidth = container.scrollWidth;
                 const clientWidth = container.clientWidth;
-                
+
                 // If we've reached the end
                 if (container.scrollLeft + clientWidth >= scrollWidth - 10) {
                     container.scrollTo({ left: 0, behavior: 'smooth' });
@@ -87,12 +87,12 @@ export default function CustomerReviews() {
             </div>
 
             {/* Auto-Scroll Slider without visible scrollbar */}
-            <div 
+            <div
                 ref={scrollContainerRef}
                 className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory px-2 -mx-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
                 {reviews.map((rev, idx) => (
-                    <div 
+                    <div
                         key={idx}
                         className="glass-card w-[85vw] max-w-[350px] md:max-w-[400px] flex-shrink-0 snap-center p-5 rounded-2xl border border-gray-200 dark:border-gray-800/80 hover:border-red-500/30 dark:border-red-500/30 transition-all flex flex-col justify-between space-y-3"
                     >

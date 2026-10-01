@@ -33,17 +33,27 @@ export default function Navbar() {
                     {/* Logo & Brand */}
                     <div className="flex items-center gap-3">
                         <Link href="/" className="flex items-center gap-2.5 group">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#f82803] to-[#730505] p-0.5 shadow-lg shadow-red-500/20 group-hover:scale-105 transition-transform">
-                                <div className="w-full h-full bg-gray-50 dark:bg-[#0b0f19] rounded-[10px] flex items-center justify-center">
-                                    <ShoppingBag className="w-5 h-5 text-[#f82803] dark:text-red-400 group-hover:text-red-700 dark:text-red-300" />
+                            {settings?.site_logo ? (
+                                <div className="h-10 w-10 rounded-xl overflow-hidden border border-red-500/20 shadow-lg shadow-red-500/10 group-hover:scale-105 transition-transform bg-white dark:bg-[#0b0f19] flex items-center justify-center p-1 shrink-0">
+                                    <img 
+                                        src={settings.site_logo} 
+                                        alt={settings?.app_name || 'Logo'} 
+                                        className="w-full h-full object-contain"
+                                    />
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#f82803] to-[#730505] p-0.5 shadow-lg shadow-red-500/20 group-hover:scale-105 transition-transform shrink-0">
+                                    <div className="w-full h-full bg-gray-50 dark:bg-[#0b0f19] rounded-[10px] flex items-center justify-center">
+                                        <ShoppingBag className="w-5 h-5 text-[#f82803] dark:text-red-400 group-hover:text-red-700 dark:text-red-300" />
+                                    </div>
+                                </div>
+                            )}
                             <div>
                                 <span className="text-lg md:text-xl font-extrabold tracking-tight font-display bg-gradient-to-r from-gray-900 dark:from-white via-gray-600 dark:via-gray-100 to-red-600 dark:to-red-400 bg-clip-text text-transparent">
                                     {settings?.app_name || 'Panel Sell'}
                                 </span>
                                 <span className="block text-[10px] text-[#f82803] dark:text-red-400/80 font-mono tracking-widest uppercase">
-                                    Official Store
+                                    {settings?.app_tagline ? settings.app_tagline.slice(0, 25) : 'Official Store'}
                                 </span>
                             </div>
                         </Link>

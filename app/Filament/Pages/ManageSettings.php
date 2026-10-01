@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\SettingService;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -93,6 +94,25 @@ class ManageSettings extends Page
                                                 ->maxLength(255),
                                         ]),
 
+                                        Grid::make(2)->schema([
+                                            FileUpload::make('site_logo')
+                                                ->label('Store Brand Logo')
+                                                ->image()
+                                                ->disk('public')
+                                                ->directory('settings')
+                                                ->imageEditor()
+                                                ->maxSize(2048)
+                                                ->helperText('Upload a logo image for navbar and footer (PNG, JPG, SVG, WebP).'),
+
+                                            FileUpload::make('site_favicon')
+                                                ->label('Browser Favicon')
+                                                ->image()
+                                                ->disk('public')
+                                                ->directory('settings')
+                                                ->maxSize(1024)
+                                                ->helperText('Square 1:1 icon for browser tab (PNG, ICO, SVG).'),
+                                        ]),
+
                                         Grid::make(3)->schema([
                                             TextInput::make('currency_symbol')
                                                 ->label('Currency Symbol')
@@ -113,6 +133,195 @@ class ManageSettings extends Page
                                                 ->placeholder('+8801700000000')
                                                 ->prefixIcon('heroicon-m-chat-bubble-left-ellipsis')
                                                 ->maxLength(50),
+                                        ]),
+                                    ]),
+
+                                Section::make('Top Bar Announcement & Notice')
+                                    ->description('Configure the marquee banner that scrolls at the very top of the storefront.')
+                                    ->schema([
+                                        Toggle::make('top_bar_notice_enabled')
+                                            ->label('Enable Top Bar Notice Banner')
+                                            ->helperText('Turn on to display the scrolling announcement marquee on the storefront.')
+                                            ->default(true),
+
+                                        Grid::make(3)->schema([
+                                            TextInput::make('top_bar_notice_label')
+                                                ->label('Badge Label')
+                                                ->placeholder('Notice')
+                                                ->default('Notice')
+                                                ->prefixIcon('heroicon-m-megaphone')
+                                                ->maxLength(30),
+
+                                            TextInput::make('top_bar_notice_text')
+                                                ->label('Marquee Notice Text')
+                                                ->placeholder('🔥 100% Instant License Key & Panel Delivery · Safe & Anti-Ban Gaming Solutions · 24/7 WhatsApp Customer Support Active')
+                                                ->default('🔥 100% Instant License Key & Panel Delivery · Safe & Anti-Ban Gaming Solutions · 24/7 WhatsApp Customer Support Active')
+                                                ->columnSpan(2)
+                                                ->maxLength(500),
+                                        ]),
+                                    ]),
+                            ]),
+
+                        Tab::make('Feature Highlights')
+                            ->icon('heroicon-m-sparkles')
+                            ->schema([
+                                Section::make('Homepage Feature Cards Ribbon')
+                                    ->description('Turn on/off and edit the 4 trust & feature highlight cards shown directly below the slider banner.')
+                                    ->schema([
+                                        Toggle::make('features_ribbon_enabled')
+                                            ->label('Display Feature Highlights Ribbon')
+                                            ->helperText('Enable to display the 4 feature cards on the storefront homepage. Disable to completely hide this section.')
+                                            ->default(true),
+
+                                        Grid::make(2)->schema([
+                                            Section::make('Feature 1 (Key Delivery)')
+                                                ->description('Red Accent')
+                                                ->schema([
+                                                    TextInput::make('feature_1_title')
+                                                        ->label('Title')
+                                                        ->placeholder('1-Sec Key Delivery')
+                                                        ->default('1-Sec Key Delivery')
+                                                        ->maxLength(60),
+                                                    TextInput::make('feature_1_subtitle')
+                                                        ->label('Subtitle')
+                                                        ->placeholder('Instant code generate')
+                                                        ->default('Instant code generate')
+                                                        ->maxLength(80),
+                                                ]),
+
+                                            Section::make('Feature 2 (Security & Anti-Ban)')
+                                                ->description('Emerald Green Accent')
+                                                ->schema([
+                                                    TextInput::make('feature_2_title')
+                                                        ->label('Title')
+                                                        ->placeholder('100% Anti-Ban')
+                                                        ->default('100% Anti-Ban')
+                                                        ->maxLength(60),
+                                                    TextInput::make('feature_2_subtitle')
+                                                        ->label('Subtitle')
+                                                        ->placeholder('Safest bypass systems')
+                                                        ->default('Safest bypass systems')
+                                                        ->maxLength(80),
+                                                ]),
+
+                                            Section::make('Feature 3 (Platform & Devices)')
+                                                ->description('Purple Accent')
+                                                ->schema([
+                                                    TextInput::make('feature_3_title')
+                                                        ->label('Title')
+                                                        ->placeholder('Root & Non-Root')
+                                                        ->default('Root & Non-Root')
+                                                        ->maxLength(60),
+                                                    TextInput::make('feature_3_subtitle')
+                                                        ->label('Subtitle')
+                                                        ->placeholder('All Android & iOS devices')
+                                                        ->default('All Android & iOS devices')
+                                                        ->maxLength(80),
+                                                ]),
+
+                                            Section::make('Feature 4 (Customer Support)')
+                                                ->description('Amber Orange Accent')
+                                                ->schema([
+                                                    TextInput::make('feature_4_title')
+                                                        ->label('Title')
+                                                        ->placeholder('24/7 Engineer Support')
+                                                        ->default('24/7 Engineer Support')
+                                                        ->maxLength(60),
+                                                    TextInput::make('feature_4_subtitle')
+                                                        ->label('Subtitle')
+                                                        ->placeholder('Direct WhatsApp help')
+                                                        ->default('Direct WhatsApp help')
+                                                        ->maxLength(80),
+                                                ]),
+                                        ]),
+                                    ]),
+                            ]),
+
+                        Tab::make('Footer Settings')
+                            ->icon('heroicon-m-window')
+                            ->schema([
+                                Section::make('Footer Brand & About Column')
+                                    ->description('Customize the bio and badges displayed in the main brand column of the footer.')
+                                    ->schema([
+                                        Textarea::make('footer_about_text')
+                                            ->label('About / Description Text')
+                                            ->placeholder('Discover the ultimate destination for premium game panels, safe non-root & root APK mods, and instant digital license key deliveries in Bangladesh.')
+                                            ->default('Discover the ultimate destination for premium game panels, safe non-root & root APK mods, and instant digital license key deliveries in Bangladesh.')
+                                            ->rows(3)
+                                            ->maxLength(500),
+
+                                        Grid::make(2)->schema([
+                                            TextInput::make('footer_badge_1')
+                                                ->label('Trust Badge 1')
+                                                ->placeholder('1-Second Key Delivery')
+                                                ->default('1-Second Key Delivery')
+                                                ->prefixIcon('heroicon-m-bolt')
+                                                ->maxLength(60),
+
+                                            TextInput::make('footer_badge_2')
+                                                ->label('Trust Badge 2')
+                                                ->placeholder('100% Anti-Ban')
+                                                ->default('100% Anti-Ban')
+                                                ->prefixIcon('heroicon-m-shield-check')
+                                                ->maxLength(60),
+                                        ]),
+                                    ]),
+
+                                Section::make('Support Column & Payment Badges')
+                                    ->description('Configure customer support info and accepted payment methods shown in the footer.')
+                                    ->schema([
+                                        Grid::make(2)->schema([
+                                            TextInput::make('footer_support_title')
+                                                ->label('Support Heading')
+                                                ->placeholder('24/7 Support')
+                                                ->default('24/7 Support')
+                                                ->maxLength(60),
+
+                                            TextInput::make('footer_quick_links_title')
+                                                ->label('Quick Links Heading')
+                                                ->placeholder('Quick Links')
+                                                ->default('Quick Links')
+                                                ->maxLength(60),
+                                        ]),
+
+                                        Textarea::make('footer_support_text')
+                                            ->label('Support Description / Helper Text')
+                                            ->placeholder('Need help with key setup or rooting? Chat directly with our verified engineers.')
+                                            ->default('Need help with key setup or rooting? Chat directly with our verified engineers.')
+                                            ->rows(2)
+                                            ->maxLength(300),
+
+                                        Grid::make(2)->schema([
+                                            TextInput::make('footer_payments_title')
+                                                ->label('Accepted Payments Label')
+                                                ->placeholder('Accepted Payments')
+                                                ->default('Accepted Payments')
+                                                ->maxLength(60),
+
+                                            TextInput::make('footer_payment_methods')
+                                                ->label('Accepted Payment Badges (comma-separated)')
+                                                ->placeholder('bKash, Nagad, Rocket, Wallet Pay')
+                                                ->default('bKash, Nagad, Rocket, Wallet Pay')
+                                                ->helperText('Separate payment methods with commas (e.g. bKash, Nagad, Rocket, Wallet Pay).')
+                                                ->maxLength(255),
+                                        ]),
+                                    ]),
+
+                                Section::make('Footer Bottom Bar & Copyright')
+                                    ->description('Manage copyright notice and right-side tagline at the very bottom of the page.')
+                                    ->schema([
+                                        Grid::make(2)->schema([
+                                            TextInput::make('footer_copyright_text')
+                                                ->label('Copyright Suffix')
+                                                ->placeholder('All rights reserved.')
+                                                ->default('All rights reserved.')
+                                                ->maxLength(100),
+
+                                            TextInput::make('footer_credit_text')
+                                                ->label('Bottom Right Tagline / Credit')
+                                                ->placeholder('Crafted for Elite Gamers & Resellers')
+                                                ->default('Crafted for Elite Gamers & Resellers')
+                                                ->maxLength(100),
                                         ]),
                                     ]),
                             ]),
@@ -309,6 +518,32 @@ class ManageSettings extends Page
             'currency_symbol' => ['group' => 'general', 'type' => 'string', 'is_public' => true],
             'support_email' => ['group' => 'general', 'type' => 'string', 'is_public' => true],
             'support_whatsapp' => ['group' => 'general', 'type' => 'string', 'is_public' => true],
+            'site_logo' => ['group' => 'general', 'type' => 'string', 'is_public' => true],
+            'site_favicon' => ['group' => 'general', 'type' => 'string', 'is_public' => true],
+            'top_bar_notice_enabled' => ['group' => 'general', 'type' => 'boolean', 'is_public' => true],
+            'top_bar_notice_label' => ['group' => 'general', 'type' => 'string', 'is_public' => true],
+            'top_bar_notice_text' => ['group' => 'general', 'type' => 'string', 'is_public' => true],
+
+            'features_ribbon_enabled' => ['group' => 'features', 'type' => 'boolean', 'is_public' => true],
+            'feature_1_title' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
+            'feature_1_subtitle' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
+            'feature_2_title' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
+            'feature_2_subtitle' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
+            'feature_3_title' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
+            'feature_3_subtitle' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
+            'feature_4_title' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
+            'feature_4_subtitle' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
+
+            'footer_about_text' => ['group' => 'footer', 'type' => 'string', 'is_public' => true],
+            'footer_badge_1' => ['group' => 'footer', 'type' => 'string', 'is_public' => true],
+            'footer_badge_2' => ['group' => 'footer', 'type' => 'string', 'is_public' => true],
+            'footer_support_title' => ['group' => 'footer', 'type' => 'string', 'is_public' => true],
+            'footer_support_text' => ['group' => 'footer', 'type' => 'string', 'is_public' => true],
+            'footer_quick_links_title' => ['group' => 'footer', 'type' => 'string', 'is_public' => true],
+            'footer_payments_title' => ['group' => 'footer', 'type' => 'string', 'is_public' => true],
+            'footer_payment_methods' => ['group' => 'footer', 'type' => 'string', 'is_public' => true],
+            'footer_copyright_text' => ['group' => 'footer', 'type' => 'string', 'is_public' => true],
+            'footer_credit_text' => ['group' => 'footer', 'type' => 'string', 'is_public' => true],
 
             'maintenance_mode' => ['group' => 'maintenance', 'type' => 'boolean', 'is_public' => true],
             'maintenance_headline' => ['group' => 'maintenance', 'type' => 'string', 'is_public' => true],
@@ -331,6 +566,10 @@ class ManageSettings extends Page
         foreach ($state as $key => $val) {
             if (! isset($definitions[$key])) {
                 continue;
+            }
+
+            if (is_array($val)) {
+                $val = array_values($val)[0] ?? null;
             }
 
             $def = $definitions[$key];

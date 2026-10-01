@@ -5,24 +5,10 @@ import MarqueeNotice from '../Components/MarqueeNotice';
 import Footer from '../Components/Footer';
 import MobileBottomNav from '../Components/MobileBottomNav';
 import { CheckCircle2, AlertCircle, X, Info } from 'lucide-react';
-import PageSkeleton from '../Components/PageSkeleton';
 
 export default function AppLayout({ title, children, notice }) {
     const { flash, settings } = usePage().props;
     const [toast, setToast] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        const removeStart = router.on('start', () => setIsLoading(true));
-        const removeFinish = router.on('finish', () => setIsLoading(false));
-        const removeException = router.on('exception', () => setIsLoading(false));
-        
-        return () => {
-            removeStart();
-            removeFinish();
-            removeException();
-        };
-    }, []);
 
     useEffect(() => {
         if (flash?.success) {
@@ -43,7 +29,12 @@ export default function AppLayout({ title, children, notice }) {
             <div className="fixed top-1/3 right-10 w-80 h-80 bg-rose-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
             {/* Top Announcement Bar */}
-            <MarqueeNotice notice={notice} />
+            {settings?.top_bar_notice_enabled !== false && (
+                <MarqueeNotice 
+                    notice={notice || settings?.top_bar_notice_text} 
+                    label={settings?.top_bar_notice_label} 
+                />
+            )}
 
             {/* Main Sticky Navbar */}
             <Navbar />
@@ -78,7 +69,7 @@ export default function AppLayout({ title, children, notice }) {
 
             {/* Main Page Body */}
             <main className="flex-1">
-                {isLoading ? <PageSkeleton /> : children}
+                {children}
             </main>
 
             {/* Footer */}

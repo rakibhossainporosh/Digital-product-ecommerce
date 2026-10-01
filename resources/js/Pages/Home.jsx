@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import AppLayout from '../Layouts/AppLayout';
 import HeroSlider from '../Components/HeroSlider';
 import CategoryTabs from '../Components/CategoryTabs';
@@ -10,6 +10,7 @@ import { Search, Zap, Shield, Headphones, Smartphone, Sparkles, Filter } from 'l
 import RecentOrdersTable from '../Components/RecentOrdersTable';
 
 export default function Home({ sliders, categories, products, recentOrders, activeCategory }) {
+    const { settings } = usePage().props;
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleCategorySelect = (categorySlug) => {
@@ -30,54 +31,74 @@ export default function Home({ sliders, categories, products, recentOrders, acti
             <HeroSlider sliders={sliders} />
 
             {/* Why Choose Us Feature Ribbon */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div className="glass-panel p-3.5 rounded-xl border border-gray-200 dark:border-gray-800/80 flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
-                            <Zap className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <span className="block text-xs font-bold text-gray-900 dark:text-white font-display">1-Sec Key Delivery</span>
-                            <span className="block text-[11px] text-gray-600 dark:text-gray-400">Instant code generate</span>
+            {settings?.features_ribbon_enabled !== false && (
+                <>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div className="glass-panel p-3.5 rounded-xl border border-gray-200 dark:border-gray-800/80 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+                                    <Zap className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <span className="block text-xs font-bold text-gray-900 dark:text-white font-display">
+                                        {settings?.feature_1_title || '1-Sec Key Delivery'}
+                                    </span>
+                                    <span className="block text-[11px] text-gray-600 dark:text-gray-400">
+                                        {settings?.feature_1_subtitle || 'Instant code generate'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="glass-panel p-3.5 rounded-xl border border-gray-200 dark:border-gray-800/80 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                                    <Shield className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <span className="block text-xs font-bold text-gray-900 dark:text-white font-display">
+                                        {settings?.feature_2_title || '100% Anti-Ban'}
+                                    </span>
+                                    <span className="block text-[11px] text-gray-600 dark:text-gray-400">
+                                        {settings?.feature_2_subtitle || 'Safest bypass systems'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="glass-panel p-3.5 rounded-xl border border-gray-200 dark:border-gray-800/80 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+                                    <Smartphone className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <span className="block text-xs font-bold text-gray-900 dark:text-white font-display">
+                                        {settings?.feature_3_title || 'Root & Non-Root'}
+                                    </span>
+                                    <span className="block text-[11px] text-gray-600 dark:text-gray-400">
+                                        {settings?.feature_3_subtitle || 'All Android & iOS devices'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="glass-panel p-3.5 rounded-xl border border-gray-200 dark:border-gray-800/80 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                                    <Headphones className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <span className="block text-xs font-bold text-gray-900 dark:text-white font-display">
+                                        {settings?.feature_4_title || '24/7 Engineer Support'}
+                                    </span>
+                                    <span className="block text-[11px] text-gray-600 dark:text-gray-400">
+                                        {settings?.feature_4_subtitle || 'Direct WhatsApp help'}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="glass-panel p-3.5 rounded-xl border border-gray-200 dark:border-gray-800/80 flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-                            <Shield className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <span className="block text-xs font-bold text-gray-900 dark:text-white font-display">100% Anti-Ban</span>
-                            <span className="block text-[11px] text-gray-600 dark:text-gray-400">Safest bypass systems</span>
-                        </div>
+                    {/* Divider */}
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <hr className="border-gray-200 dark:border-gray-800/60 my-4 sm:my-6" />
                     </div>
-
-                    <div className="glass-panel p-3.5 rounded-xl border border-gray-200 dark:border-gray-800/80 flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
-                            <Smartphone className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <span className="block text-xs font-bold text-gray-900 dark:text-white font-display">Root & Non-Root</span>
-                            <span className="block text-[11px] text-gray-600 dark:text-gray-400">All Android & iOS devices</span>
-                        </div>
-                    </div>
-
-                    <div className="glass-panel p-3.5 rounded-xl border border-gray-200 dark:border-gray-800/80 flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-                            <Headphones className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <span className="block text-xs font-bold text-gray-900 dark:text-white font-display">24/7 Engineer Support</span>
-                            <span className="block text-[11px] text-gray-600 dark:text-gray-400">Direct WhatsApp help</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Divider */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <hr className="border-gray-200 dark:border-gray-800/60 my-4 sm:my-6" />
-            </div>
+                </>
+            )}
 
             {/* Product Section Header & Search */}
             <section id="products" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-4">

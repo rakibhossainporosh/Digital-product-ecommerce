@@ -8,7 +8,7 @@ export default function ProductCard({ product }) {
     return (
         <div className="glass-card rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800/90 hover:border-red-500/40 transition-all duration-300 flex flex-col group relative">
             {/* Top Image & Badges Container */}
-            <div className="relative aspect-[16/10] w-full overflow-hidden bg-gradient-to-br from-slate-900 via-gray-900 to-[#0d1527] flex items-center justify-center p-3">
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 dark:from-slate-900 dark:via-gray-900 dark:to-[#0d1527] flex items-center justify-center p-3">
                 {product.image_url ? (
                     <>
                         {/* Blurred background layer */}
@@ -25,10 +25,10 @@ export default function ProductCard({ product }) {
                     </>
                 ) : (
                     <div className="w-full h-full rounded-xl bg-gradient-to-tr from-red-950/40 via-gray-900 to-black/40 border border-red-500/20 flex flex-col items-center justify-center text-center p-4">
-                        <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 mb-2 group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 flex items-center justify-center text-red-500 dark:text-red-400 mb-2 group-hover:scale-110 transition-transform">
                             {isService ? <Wrench className="w-6 h-6" /> : <Smartphone className="w-6 h-6" />}
                         </div>
-                        <span className="text-xs font-mono font-bold text-gray-400 tracking-wider uppercase">
+                        <span className="text-xs font-mono font-bold text-gray-500 dark:text-gray-400 tracking-wider uppercase">
                             {isService ? 'Manual Service' : 'Instant Panel'}
                         </span>
                     </div>
@@ -37,22 +37,22 @@ export default function ProductCard({ product }) {
                 {/* Status Badges */}
                 <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 z-20">
                     {product.category && (
-                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-black/70 backdrop-blur-md text-red-400 border border-red-500/30">
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/70 dark:bg-black/70 backdrop-blur-md text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/30 shadow-sm">
                             {product.category.name}
                         </span>
                     )}
 
                     {product.is_maintenance ? (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-500/20 text-gray-300 border border-gray-500/30 backdrop-blur-md flex items-center gap-1">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-gray-200/50 dark:bg-gray-500/20 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-500/30 backdrop-blur-md flex items-center gap-1 shadow-sm">
                             <Wrench className="w-3 h-3" /> Maintenance
                         </span>
                     ) : isService ? (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 backdrop-blur-md">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100/80 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30 backdrop-blur-md shadow-sm">
                             Custom Service
                         </span>
                     ) : (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 backdrop-blur-md flex items-center gap-1">
-                            <Zap className="w-3 h-3 fill-emerald-300" /> Instant Key
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100/80 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30 backdrop-blur-md flex items-center gap-1 shadow-sm">
+                            <Zap className="w-3 h-3 fill-emerald-600 dark:fill-emerald-300" /> Instant Key
                         </span>
                     )}
                 </div>

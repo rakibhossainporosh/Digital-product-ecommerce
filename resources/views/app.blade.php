@@ -6,6 +6,9 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title inertia>{{ setting('app_name', 'Panel Sell BD') }}</title>
+        @if(setting('site_favicon'))
+            <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . setting('site_favicon')) }}">
+        @endif
 
         <!-- Modern Gaming & Cyber Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
