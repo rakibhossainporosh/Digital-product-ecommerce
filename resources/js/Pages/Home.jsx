@@ -143,9 +143,9 @@ export default function Home({ sliders, categories, products, recentOrders, acti
             </section>
 
             {/* Products Grid */}
-            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+            <section className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 pb-4">
                 {filteredProducts.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
                         {filteredProducts.map((product) => (
                             <ProductCard key={product.id} product={product} />
                         ))}
