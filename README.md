@@ -12,7 +12,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 <p align="center">
-  A high-performance, enterprise-grade digital marketplace engineered for selling software license keys, game panel access, and instant digital assets with automated fulfillment, customer wallet system, and dynamic reseller pricing.
+  A high-performance, enterprise-grade digital marketplace engineered for selling software license keys, game panel access and instant digital assets with automated fulfillment, customer wallet system and dynamic reseller pricing.
 </p>
 
 [Explore Features](#-key-features) •
@@ -28,11 +28,11 @@
 
 ## 📖 Overview
 
-**NexusKey** is a modern full-stack e-commerce solution tailored specifically for digital goods vendors, gaming communities, and software distributors. 
+**NexusKey** is a modern full-stack e-commerce solution tailored specifically for digital goods vendors, gaming communities and software distributors. 
 
-Unlike traditional physical e-commerce engines, NexusKey focuses entirely on the unique lifecycle of virtual goods: **instant key stock reservation, automated delivery upon payment confirmation, external game panel API synchronization, digital customer wallets, and tiered reseller margins.**
+Unlike traditional physical e-commerce engines, NexusKey focuses entirely on the unique lifecycle of virtual goods: **instant key stock reservation, automated delivery upon payment confirmation, external API synchronization, digital customer wallets, and tiered reseller margins.**
 
-Powered by **Laravel**, **Inertia.js**, **React 19**, and **Tailwind CSS v4**, the customer portal provides a high-converting, cyber-themed glassmorphism aesthetic with seamless mobile-first responsiveness. Administrative workflows are powered by **Filament**, providing full control over catalog variants, stock pools, security logs, and sales analytics.
+Powered by **Laravel**, **Inertia.js**, **React 19**, and **Tailwind CSS v4**, the customer portal provides a high-converting, cyber-themed glassmorphism aesthetic with seamless mobile-first responsiveness. Administrative workflows are powered by **Filament**, providing full control over catalog variants, stock pools, security logs and sales analytics.
 
 ---
 
@@ -41,20 +41,20 @@ Powered by **Laravel**, **Inertia.js**, **React 19**, and **Tailwind CSS v4**, t
 ### ⚡ Instant License Key Inventory & Fulfillment
 - **Automated Delivery:** Instant digital key assignment to customer accounts as soon as a payment transaction confirms.
 - **Race-Condition Safe:** Concurrency-safe stock reservation preventing duplicate sales during high-traffic drops.
-- **Bulk Import Engine:** Easily upload hundreds of serial keys, activation codes, or panel credentials in bulk with duplicate detection.
-- **Safety Guides & Setup Files:** Attach downloadable files, safety instructions, and maintenance advisories directly to product variants.
+- **Bulk Import Engine:** Easily upload hundreds of serial keys, activation codes or panel credentials in bulk with duplicate detection.
+- **Safety Guides & Setup Files:** Attach downloadable files, safety instructions and maintenance advisories directly to product variants.
 
 ### 🎮 External Game Panel API Automation
-- **API Auto-Provisioning:** Direct integration with external gaming panels and subscription servers (`ExternalPanelApiService`).
+- **API Auto-Provisioning:** Direct integration with external subscription servers.
 - **Dynamic Key Generation:** Request and provision fresh activation keys or accounts on-the-fly via external webhooks and REST endpoints.
 
 ### 💳 Customer Digital Wallet & Multi-Gateway Checkout
-- **Instant Wallet System:** Customers can maintain a store balance (`WalletService`) with transparent audit logs of deposits, purchases, and bonus rewards.
+- **Instant Wallet System:** Customers can maintain a store balance (`WalletService`) with transparent audit logs of deposits, purchases and bonus rewards.
 - **1-Click Checkout:** Zero-friction purchases using pre-funded digital wallet balances.
-- **Gateway Integration:** Integrated payment processing with webhook verification, payment verification callbacks, and error recovery.
+- **Gateway Integration:** Integrated payment processing with webhook verification, payment verification callbacks and error recovery.
 
 ### 👥 High-End Customer Portal & Mobile-First UX
-- **Cyber-Gaming Dark Aesthetic:** Premium dark UI enriched with glassmorphism panels, subtle glow accents, and responsive typography.
+- **Cyber Dark Aesthetic:** Premium dark UI enriched with glassmorphism panels, subtle glow accents, and responsive typography.
 - **1-Tap License Copier:** High-contrast key cards with 1-click clipboard copy and secret masking.
 - **Interactive Order Tracking:** Accordion-style order history with real-time fulfillment status badges.
 - **Live Helpdesk AI Chatbot:** Persistent, floating support assistant guiding users through common queries (orders, wallet top-up, key retrieval).
@@ -64,8 +64,8 @@ Powered by **Laravel**, **Inertia.js**, **React 19**, and **Tailwind CSS v4**, t
 - **Role-Based Access Control (RBAC):** Granular permissions and roles powered by Spatie Laravel Permission & Filament Shield.
 - **Product & Variant Catalog:** Multi-tiered variants (e.g., 1-Day, 7-Day, 30-Day, Lifetime).
 - **Customer Security & Login History:** Track IP addresses, devices, browsers, and timestamps to detect unauthorized account sharing or suspicious activity.
-- **Discounts & Promo Codes:** Expiry dates, minimum spend thresholds, percentage or fixed discounts, and per-user usage limits.
-- **Financial Analytics & Sales Reports:** Dedicated sales reports, revenue trends, and exportable financial summaries.
+- **Discounts & Promo Codes:** Expiry dates, minimum spend thresholds, percentage or fixed discounts and per-user usage limits.
+- **Financial Analytics & Sales Reports:** Dedicated sales reports, revenue trends and exportable financial summaries.
 
 ---
 
@@ -73,8 +73,8 @@ Powered by **Laravel**, **Inertia.js**, **React 19**, and **Tailwind CSS v4**, t
 
 | Domain | Technology / Package | Description |
 | :--- | :--- | :--- |
-| **Backend Framework** | [Laravel 12 / 13](https://laravel.com) | Modern PHP framework offering expressive syntax and enterprise stability |
-| **Language** | [PHP 8.3+](https://php.net) | Strong typing, promoted constructor properties, and high execution speed |
+| **Backend Framework** | [Laravel 13](https://laravel.com) | Modern PHP framework offering expressive syntax and enterprise stability |
+| **Language** | [PHP 8.5](https://php.net) | Strong typing, promoted constructor properties, and high execution speed |
 | **Frontend Framework** | [React 19](https://react.dev) + [Inertia.js](https://inertiajs.com) | Monolith SPA architecture without client-side routing complexity |
 | **Styling & Icons** | [Tailwind CSS v4](https://tailwindcss.com) + [Lucide](https://lucide.dev) | Modern utility styling with bespoke dark-mode glassmorphic components |
 | **Admin Suite** | [Filament v5](https://filamentphp.com) | Extensible, modern TALL-stack administrative control panel |
@@ -88,11 +88,11 @@ Powered by **Laravel**, **Inertia.js**, **React 19**, and **Tailwind CSS v4**, t
 
 Ensure your server or development environment satisfies the following requirements:
 
-- **PHP**: `^8.3`, `^8.4`, or `^8.5` (Extensions: `bcmath`, `ctype`, `curl`, `dom`, `fileinfo`, `mbstring`, `openssl`, `pdo`, `tokenizer`, `xml`)
+- **PHP**: `^8.5` (Extensions: `bcmath`, `ctype`, `curl`, `dom`, `fileinfo`, `mbstring`, `openssl`, `pdo`, `tokenizer`, `xml`)
 - **Composer**: `2.x`
 - **Node.js**: `>= 20.x`
 - **NPM / Yarn / Bun**: Latest stable version
-- **Database**: SQLite (default for development), MySQL `8.0+`, or PostgreSQL `14+`
+- **Database**: MySQL `8.0+`
 
 ---
 
@@ -174,12 +174,12 @@ The database seeders provide pre-configured accounts for testing different user 
 
 The admin panel is accessible at `/admin`. It provides:
 
-- **Dashboard:** At-a-glance revenue indicators, recent orders, and inventory health.
-- **Product & Variant Catalog:** Manage digital items, set thumbnail galleries, upload instructions, and configure pricing tiers.
-- **License Keys Pool:** Track keys by status (`Available`, `Sold`, `Reserved`), view serial details, and perform batch imports.
-- **Orders & Fulfillment:** Review pending, completed, or failed orders, inspect associated keys, or manually re-dispatch licenses.
-- **Customer Management:** View user balances, adjust wallet credits manually with audit trails, and inspect customer login logs.
-- **Site Settings:** Change application title, logo, contact information, marquee notification banner, and payment gateway keys directly from the GUI.
+- **Dashboard:** At-a-glance revenue indicators, recent orders and inventory health.
+- **Product & Variant Catalog:** Manage digital items, set thumbnail galleries, upload instructions and configure pricing tiers.
+- **License Keys Pool:** Track keys by status (`Available`, `Sold`, `Reserved`), view serial details and perform batch imports.
+- **Orders & Fulfillment:** Review pending, completed or failed orders, inspect associated keys or manually re-dispatch licenses.
+- **Customer Management:** View user balances, adjust wallet credits manually with audit trails and inspect customer login logs.
+- **Site Settings:** Change application title, logo, contact information, marquee notification banner and payment gateway keys directly from the GUI.
 
 ---
 
@@ -243,7 +243,7 @@ Digital-product-ecommerce/
 
 ## 🤝 Contributing
 
-Contributions make the open-source community an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions make the open-source community an amazing place to learn, inspire and create. Any contributions you make are **greatly appreciated**.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
