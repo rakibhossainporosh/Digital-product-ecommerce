@@ -12,7 +12,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 <p align="center">
-  A high concurrency full-stack digital goods marketplace engineered for selling software activation keys, gaming panel subscriptions and instant digital assets. Built with atomic stock reservation, automated webhook delivery, customer digital wallet ledger and multi-tier reseller capabilities.
+  A high concurrency full-stack digital goods marketplace engineered for selling software activation keys, subscriptions and instant digital assets. Built with atomic stock reservation, automated webhook delivery, customer digital wallet ledger and multi-tier reseller capabilities.
 </p>
 
 [Key Features](#-core-capabilities) •
