@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ NexusKey — Enterprise Digital Product & License Marketplace
+# NexusKey - Enterprise Digital Product & License Marketplace
 
 [![Laravel](https://img.shields.io/badge/Laravel-12%2F13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.3%20|%208.4%20|%208.5-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
@@ -12,7 +12,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 <p align="center">
-  A high-concurrency, full-stack digital goods marketplace engineered for selling software activation keys, gaming panel subscriptions, and instant digital assets. Built with atomic stock reservation, automated webhook delivery, customer digital wallet ledger, and multi-tier reseller capabilities.
+  A high concurrency full-stack digital goods marketplace engineered for selling software activation keys, gaming panel subscriptions and instant digital assets. Built with atomic stock reservation, automated webhook delivery, customer digital wallet ledger and multi-tier reseller capabilities.
 </p>
 
 [Key Features](#-core-capabilities) •
@@ -29,11 +29,11 @@
 
 ## 📖 Executive Summary
 
-**NexusKey** is a production-ready e-commerce platform designed from the ground up for software distributors, SaaS vendors, and digital gaming communities. 
+**NexusKey** is a production-ready e-commerce platform designed from the ground up for software distributors, vendors and digital gaming communities. 
 
-Unlike conventional physical e-commerce systems, digital commerce demands specialized architectures: **zero-latency license key allocation, concurrency-safe inventory locking, automated remote panel API provisioning, pre-funded wallet transactions, and suspicious login fingerprinting.**
+Unlike conventional physical e-commerce systems, digital commerce demands specialized architectures: **zero latency license key allocation, concurrency safe inventory locking, automated remote panel API provisioning, pre-funded wallet transactions and suspicious login fingerprinting.**
 
-NexusKey combines the elegance of **Laravel (v12/v13)** with the responsiveness of a **React 19 SPA** via **Inertia.js v3**, styled with **Tailwind CSS v4** in a cyber-gaming glassmorphic aesthetic. The administrative layer is powered by **Filament v5** with granular Role-Based Access Control (RBAC).
+NexusKey combines the elegance of **Laravel (v13)** with the responsiveness of a **React 19 SPA** via **Inertia.js v3**, styled with **Tailwind CSS v4** in a cyber gaming glassmorphic aesthetic. The administrative layer is powered by **Filament v5** with granular Role-Based Access Control (RBAC).
 
 ---
 
@@ -88,32 +88,32 @@ flowchart TD
 
 ## 🌟 Core Capabilities
 
-### ⚡ Concurrency-Safe Stock & Automated Fulfillment
-- **Race-Condition Protection:** Utilizes database row-level locking (`lockForUpdate`) in `LicenseKeyStockService` to ensure keys cannot be double-sold during concurrent checkout spikes.
+### ⚡ Concurrency Safe Stock & Automated Fulfillment
+- **Race Condition Protection:** Utilizes database row-level locking (`lockForUpdate`) in `LicenseKeyStockService` to ensure keys cannot be double sold during concurrent checkout spikes.
 - **Instant Delivery Pipeline:** Licenses are automatically detached from the available stock pool and associated with the customer's order the millisecond payment is confirmed.
-- **Bulk Import Engine:** High-volume CSV/batch key importer with automatic sanitization and duplicate detection (`LicenseKeyImportService`).
-- **Product Safety & Setup Docs:** Direct delivery of setup guides, maintenance warnings, and downloadable binaries per product variant.
+- **Bulk Import Engine:** High volume CSV/batch key importer with automatic sanitization and duplicate detection (`LicenseKeyImportService`).
+- **Product Safety & Setup Docs:** Direct delivery of setup guides, maintenance warnings and downloadable binaries per product variant.
 
 ### 🎮 External Game Panel API Provisioning
 - **Dynamic Key Generation:** Connects directly with remote game panels via `ExternalPanelApiService` to provision live user accounts or dynamic activation keys on demand.
 - **Webhook Handlers:** Asynchronous callbacks and signature-verified webhook endpoints with automated retry safeguards.
 
 ### 💳 Customer Digital Wallet System
-- **Double-Entry Financial Ledger:** Transparent tracking of all user deposits, purchases, refunds, and promo rewards with strict audit trails (`WalletService`).
+- **Double-Entry Financial Ledger:** Transparent tracking of all user deposits, purchases, refunds and promo rewards with strict audit trails (`WalletService`).
 - **1-Click Checkout:** Zero-friction purchases using pre-funded balances, bypassing external payment redirects.
 - **Admin Adjustments:** Secure, audited manual balance credits/debits directly from the Filament admin panel.
 
 ### 👥 Modern Cyberpunk UX & Support Chatbot
-- **Tailwind CSS v4 + React 19:** Custom-crafted dark mode with glassmorphic panels, neon accent glows, and smooth micro-interactions.
-- **Mobile-First Experience:** Fixed floating navigation bar (`MobileBottomNav`) designed specifically for one-handed mobile browsing.
-- **1-Tap Key Copier:** Protected, masked serial codes with instant one-click clipboard copying.
-- **Live Helpdesk Chatbot:** Persistent interactive chatbot (`Chatbot.jsx`) capable of guiding customers through order tracking, wallet deposits, and key retrieval.
+- **Tailwind CSS v4 + React 19:** Custom-crafted dark mode with glassmorphic panels, neon accent glows and smooth micro-interactions.
+- **Mobile First Experience:** Fixed floating navigation bar (`MobileBottomNav`) designed specifically for one-handed mobile browsing.
+- **1-Tap Key Copier:** Protected, masked serial codes with instant one click clipboard copying.
+- **Live Helpdesk Chatbot:** Persistent interactive chatbot (`Chatbot.jsx`) capable of guiding customers through order tracking, wallet deposits and key retrieval.
 
 ### 🛡️ Security, Audit & Admin Governance
-- **Role-Based Access Control (RBAC):** Multi-tier roles (Super Admin, Store Manager) governed by Spatie Permission & Filament Shield.
-- **Customer Security & Login Audits:** Captures IP addresses, operating systems, browsers, and timestamps (`LoginHistory`) to detect suspicious account sharing.
-- **Dynamic Promo Engine:** Percentage and fixed discounts with usage ceilings, expiry controls, and per-user limits.
-- **Executive Analytics:** Real-time revenue monitors, stock health indicators, and exportable financial reports (`SalesReportPage`).
+- **Role Based Access Control (RBAC):** Multi-tier roles (Super Admin, Store Manager) governed by Spatie Permission & Filament Shield.
+- **Customer Security & Login Audits:** Captures IP addresses, operating systems, browsers and timestamps (`LoginHistory`) to detect suspicious account sharing.
+- **Dynamic Promo Engine:** Percentage and fixed discounts with usage ceilings, expiry controls and per-user limits.
+- **Executive Analytics:** Real-time revenue monitors, stock health indicators and exportable financial reports (`SalesReportPage`).
 
 ---
 
