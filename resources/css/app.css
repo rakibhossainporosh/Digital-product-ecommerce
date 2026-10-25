@@ -23,11 +23,11 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #e2e8f0;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #94a3b8;
     border-radius: 9999px;
 }
 
@@ -36,15 +36,59 @@
 }
 
 .dark ::-webkit-scrollbar-track {
-    background: #000000;
+    background: #0f172a;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-    background: #1a1a1a;
+    background: #334155;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
     background: #f82803;
+}
+
+/* High-contrast scrollbar specifically for tables and data cards */
+.table-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #f82803 #e2e8f0;
+}
+
+.dark .table-scrollbar {
+    scrollbar-color: #f82803 #1e293b;
+}
+
+.table-scrollbar::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.table-scrollbar::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 9999px;
+    margin: 0 8px;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb {
+    background: #f82803;
+    border-radius: 9999px;
+    box-shadow: 0 1px 3px rgba(248, 40, 3, 0.4);
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #dc2626;
+}
+
+.dark .table-scrollbar::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+.dark .table-scrollbar::-webkit-scrollbar-thumb {
+    background: #f82803;
+    box-shadow: 0 1px 4px rgba(248, 40, 3, 0.5);
+}
+
+.dark .table-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #ff4d2e;
 }
 
 /* Glassmorphism helpers */

@@ -14,7 +14,11 @@ class TopProductsWidget extends TableWidget
 {
     protected static ?int $sort = 4;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = [
+        'default' => 'full',
+        'md' => 1,
+        'xl' => 2,
+    ];
 
     protected static ?string $heading = 'Top Selling Products';
 

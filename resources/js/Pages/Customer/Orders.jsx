@@ -81,6 +81,14 @@ export default function Orders({ orders }) {
     const handleCopy = (keyStr, idx) => {
         navigator.clipboard.writeText(keyStr);
         setCopiedKey(idx);
+        window.dispatchEvent(
+            new CustomEvent('app-toast', {
+                detail: {
+                    type: 'success',
+                    message: 'License key copied to clipboard!',
+                },
+            })
+        );
         setTimeout(() => setCopiedKey(null), 2000);
     };
 

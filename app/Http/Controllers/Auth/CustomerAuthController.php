@@ -52,7 +52,7 @@ class CustomerAuthController extends Controller
         auth('customer')->login($customer, $request->boolean('remember'));
         $request->session()->regenerate();
 
-        return redirect()->intended('/')->with('success', "Welcome back, {$customer->name}!");
+        return redirect()->intended('/')->with('success', "Welcome back, {$customer->name}! You're successfully signed in.");
     }
 
     /**
@@ -104,7 +104,7 @@ class CustomerAuthController extends Controller
         auth('customer')->login($customer);
         $request->session()->regenerate();
 
-        return redirect('/')->with('success', 'Account created successfully! Welcome to '.setting('app_name', 'Panel Sell BD').'.');
+        return redirect('/')->with('success', 'Your account has been created successfully! Welcome to '.setting('app_name', 'Panel Sell').'. Your digital wallet is ready.');
     }
 
     /**
@@ -116,6 +116,6 @@ class CustomerAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('info', 'You have been logged out.');
+        return redirect('/')->with('info', 'You have been safely signed out. See you again soon!');
     }
 }

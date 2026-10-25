@@ -24,11 +24,20 @@ class PromoCodeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTicket;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Marketing & Sales';
+    protected static string|\UnitEnum|null $navigationGroup = 'Marketing & Storefront';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationLabel = 'Promo Codes';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'code';
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::where('is_active', true)->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
 
     public static function form(Schema $schema): Schema
     {

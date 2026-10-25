@@ -5,7 +5,7 @@ import MarqueeNotice from '../Components/MarqueeNotice';
 import Footer from '../Components/Footer';
 import MobileBottomNav from '../Components/MobileBottomNav';
 import Chatbot from '../Components/Chatbot';
-import { CheckCircle2, AlertCircle, X, Info } from 'lucide-react';
+import { CheckCircle2, AlertCircle, AlertTriangle, X, Info } from 'lucide-react';
 
 export default function AppLayout({ title, children, notice }) {
     const { flash, settings } = usePage().props;
@@ -16,10 +16,27 @@ export default function AppLayout({ title, children, notice }) {
             setToast({ type: 'success', message: flash.success, id: Date.now() });
         } else if (flash?.error) {
             setToast({ type: 'error', message: flash.error, id: Date.now() });
+        } else if (flash?.warning) {
+            setToast({ type: 'warning', message: flash.warning, id: Date.now() });
         } else if (flash?.info) {
             setToast({ type: 'info', message: flash.info, id: Date.now() });
         }
     }, [flash]);
+
+    useEffect(() => {
+        const handleCustomToast = (e) => {
+            if (e.detail?.message) {
+                setToast({
+                    type: e.detail.type || 'info',
+                    message: e.detail.message,
+                    id: Date.now(),
+                });
+            }
+        };
+
+        window.addEventListener('app-toast', handleCustomToast);
+        return () => window.removeEventListener('app-toast', handleCustomToast);
+    }, []);
 
     useEffect(() => {
         if (toast) {
@@ -57,11 +74,13 @@ export default function AppLayout({ title, children, notice }) {
                             ? 'bg-white/95 dark:bg-[#0c1424]/95 border-emerald-500/30 shadow-emerald-500/10 dark:shadow-emerald-950/50' 
                             : toast.type === 'error'
                             ? 'bg-white/95 dark:bg-[#1a0a0f]/95 border-rose-500/30 shadow-rose-500/10 dark:shadow-rose-950/50'
+                            : toast.type === 'warning'
+                            ? 'bg-white/95 dark:bg-[#1a140a]/95 border-amber-500/30 shadow-amber-500/10 dark:shadow-amber-950/50'
                             : 'bg-white/95 dark:bg-[#0a1224]/95 border-blue-500/30 shadow-blue-500/10 dark:shadow-blue-950/50'
                     }`}>
                         {/* Ambient glow behind icon */}
                         <div className={`absolute -top-6 -left-6 w-24 h-24 rounded-full blur-xl pointer-events-none ${
-                            toast.type === 'success' ? 'bg-emerald-500/20' : toast.type === 'error' ? 'bg-rose-500/20' : 'bg-blue-500/20'
+                            toast.type === 'success' ? 'bg-emerald-500/20' : toast.type === 'error' ? 'bg-rose-500/20' : toast.type === 'warning' ? 'bg-amber-500/20' : 'bg-blue-500/20'
                         }`} />
 
                         {/* Icon badge */}
@@ -70,10 +89,13 @@ export default function AppLayout({ title, children, notice }) {
                                 ? 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/25 ring-4 ring-emerald-500/10' 
                                 : toast.type === 'error'
                                 ? 'bg-gradient-to-br from-red-500 to-rose-600 shadow-rose-500/25 ring-4 ring-rose-500/10'
+                                : toast.type === 'warning'
+                                ? 'bg-gradient-to-br from-amber-500 to-orange-600 shadow-amber-500/25 ring-4 ring-amber-500/10'
                                 : 'bg-gradient-to-br from-blue-500 to-indigo-600 shadow-blue-500/25 ring-4 ring-blue-500/10'
                         }`}>
                             {toast.type === 'success' && <CheckCircle2 className="w-5 h-5 text-white" strokeWidth={2.5} />}
                             {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-white" strokeWidth={2.5} />}
+                            {toast.type === 'warning' && <AlertTriangle className="w-5 h-5 text-white" strokeWidth={2.5} />}
                             {toast.type === 'info' && <Info className="w-5 h-5 text-white" strokeWidth={2.5} />}
                         </div>
 
@@ -85,9 +107,11 @@ export default function AppLayout({ title, children, notice }) {
                                         ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' 
                                         : toast.type === 'error'
                                         ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
+                                        : toast.type === 'warning'
+                                        ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                                         : 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
                                 }`}>
-                                    {toast.type === 'success' ? 'Success' : toast.type === 'error' ? 'Error' : 'Notice'}
+                                    {toast.type === 'success' ? 'Success' : toast.type === 'error' ? 'Error' : toast.type === 'warning' ? 'Attention' : 'Notice'}
                                 </span>
                                 <span className="text-[11px] text-gray-400 dark:text-gray-500">Just now</span>
                             </div>
@@ -112,6 +136,8 @@ export default function AppLayout({ title, children, notice }) {
                                     ? 'bg-gradient-to-r from-emerald-500 to-teal-400' 
                                     : toast.type === 'error'
                                     ? 'bg-gradient-to-r from-red-500 to-rose-500'
+                                    : toast.type === 'warning'
+                                    ? 'bg-gradient-to-r from-amber-500 to-orange-500'
                                     : 'bg-gradient-to-r from-blue-500 to-indigo-500'
                             }`} />
                         </div>

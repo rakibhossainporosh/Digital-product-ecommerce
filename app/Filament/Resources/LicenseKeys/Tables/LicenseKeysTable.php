@@ -156,7 +156,8 @@ class LicenseKeysTable
                         $record->update(['status' => LicenseKeyStatus::Revoked]);
 
                         Notification::make()
-                            ->title('License key revoked')
+                            ->title('License Key Revoked')
+                            ->body("Key '{$record->key}' has been revoked and removed from available stock.")
                             ->warning()
                             ->send();
                     }),
@@ -173,9 +174,11 @@ class LicenseKeysTable
                         ->requiresConfirmation()
                         ->action(function (Collection $records): void {
                             $records->each->update(['status' => LicenseKeyStatus::Available]);
+                            $count = $records->count();
 
                             Notification::make()
-                                ->title('Selected keys marked as Available')
+                                ->title('License Keys Activated')
+                                ->body("{$count} license key(s) are now marked as Available and ready for customer orders.")
                                 ->success()
                                 ->send();
                         }),
@@ -187,9 +190,11 @@ class LicenseKeysTable
                         ->requiresConfirmation()
                         ->action(function (Collection $records): void {
                             $records->each->update(['status' => LicenseKeyStatus::Revoked]);
+                            $count = $records->count();
 
                             Notification::make()
-                                ->title('Selected keys revoked')
+                                ->title('License Keys Revoked')
+                                ->body("{$count} license key(s) have been revoked from stock.")
                                 ->warning()
                                 ->send();
                         }),

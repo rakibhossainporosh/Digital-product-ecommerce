@@ -8,11 +8,17 @@ use Filament\Widgets\ChartWidget;
 
 class RevenueChartWidget extends ChartWidget
 {
-    protected ?string $heading = 'Revenue (Last 30 Days)';
+    protected ?string $heading = 'Revenue Trend (Last 30 Days)';
 
     protected static ?int $sort = 2;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = [
+        'default' => 'full',
+        'md' => 1,
+        'xl' => 2,
+    ];
+
+    protected ?string $maxHeight = '320px';
 
     protected function getData(): array
     {
@@ -43,8 +49,12 @@ class RevenueChartWidget extends ChartWidget
                     'label' => 'Revenue (৳)',
                     'data' => $data,
                     'fill' => 'start',
-                    'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
-                    'borderColor' => '#3b82f6',
+                    'tension' => 0.35,
+                    'backgroundColor' => 'rgba(248, 40, 3, 0.08)',
+                    'borderColor' => '#f82803',
+                    'pointBackgroundColor' => '#f82803',
+                    'pointBorderColor' => '#ffffff',
+                    'pointHoverRadius' => 6,
                 ],
             ],
             'labels' => $labels,

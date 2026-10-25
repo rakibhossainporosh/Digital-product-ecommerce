@@ -24,6 +24,50 @@ export default function Navbar() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [activeSection, setActiveSection] = useState('home');
+
+    const defaultMenuItems = [
+        { label: 'Home', url: '/', open_in_new_tab: false, is_active: true },
+        { label: 'Products', url: '/#products', open_in_new_tab: false, is_active: true },
+        { label: 'Reviews', url: '/#reviews', open_in_new_tab: false, is_active: true },
+    ];
+
+    const rawMenuItems = Array.isArray(settings?.navbar_menu_items) && settings.navbar_menu_items.length > 0 
+        ? settings.navbar_menu_items 
+        : defaultMenuItems;
+
+    const navMenuItems = rawMenuItems.filter((item) => item && item.is_active !== false);
+
+    const isMenuItemActive = (item) => {
+        if (!item?.url) return false;
+        const itemUrl = item.url.trim();
+
+        if (itemUrl === '/' || itemUrl === '') {
+            return activeSection === 'home' && (url === '/' || url.startsWith('/?'));
+        }
+        if (itemUrl === '/#products' || itemUrl === '#products') {
+            return activeSection === 'products';
+        }
+        if (itemUrl === '/#reviews' || itemUrl === '#reviews') {
+            return activeSection === 'reviews';
+        }
+        if (itemUrl.startsWith('/') && !itemUrl.includes('#')) {
+            return url === itemUrl || url.startsWith(itemUrl + '/');
+        }
+        return false;
+    };
+
+    const handleMenuClick = (item) => {
+        if (!item?.url) return;
+        const itemUrl = item.url.trim();
+        if (itemUrl === '/' || itemUrl === '') {
+            setActiveSection('home');
+        } else if (itemUrl.includes('#products')) {
+            setActiveSection('products');
+        } else if (itemUrl.includes('#reviews')) {
+            setActiveSection('reviews');
+        }
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -32,6 +76,53 @@ export default function Navbar() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Track active section between Home, Products, and Reviews
+    useEffect(() => {
+        if (url.startsWith('/product')) {
+            setActiveSection('products');
+            return;
+        }
+
+        if (url.includes('category=')) {
+            setActiveSection('products');
+            return;
+        }
+
+        const checkLocation = () => {
+            if (url !== '/' && !url.startsWith('/?')) return;
+            const hash = window.location.hash;
+            if (hash === '#products') {
+                setActiveSection('products');
+                return;
+            }
+            if (hash === '#reviews') {
+                setActiveSection('reviews');
+                return;
+            }
+
+            const productsEl = document.getElementById('products');
+            const reviewsEl = document.getElementById('reviews');
+            const scrollPos = window.scrollY + 140;
+
+            if (reviewsEl && scrollPos >= reviewsEl.offsetTop) {
+                setActiveSection('reviews');
+            } else if (productsEl && scrollPos >= productsEl.offsetTop) {
+                setActiveSection('products');
+            } else {
+                setActiveSection('home');
+            }
+        };
+
+        checkLocation();
+        window.addEventListener('hashchange', checkLocation);
+        window.addEventListener('scroll', checkLocation, { passive: true });
+
+        return () => {
+            window.removeEventListener('hashchange', checkLocation);
+            window.removeEventListener('scroll', checkLocation);
+        };
+    }, [url]);
 
     const handleLogout = (e) => {
         e.preventDefault();
@@ -77,27 +168,50 @@ export default function Navbar() {
 
                         {/* Desktop Navigation Links */}
                         <div className="hidden md:flex items-center gap-1 ml-4 pl-6 border-l border-gray-200 dark:border-gray-800">
-                            <Link 
-                                href="/" 
-                                className={`relative px-4 py-2 text-sm font-semibold transition-colors group ${isActive('/') ? 'text-[#f82803] dark:text-red-400' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'}`}
-                            >
-                                Home
-                                <span className={`absolute inset-x-4 -bottom-1 h-0.5 rounded-t-full transition-transform duration-300 origin-left ${isActive('/') ? 'bg-[#f82803] dark:bg-red-500 scale-x-100' : 'bg-gray-300 dark:bg-gray-600 scale-x-0 group-hover:scale-x-100'}`}></span>
-                            </Link>
-                            <a 
-                                href="/#products" 
-                                className="relative px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors group"
-                            >
-                                Products
-                                <span className="absolute inset-x-4 -bottom-1 h-0.5 rounded-t-full transition-transform duration-300 origin-left bg-gray-300 dark:bg-gray-600 scale-x-0 group-hover:scale-x-100"></span>
-                            </a>
-                            <a 
-                                href="/#reviews" 
-                                className="relative px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors group"
-                            >
-                                Reviews
-                                <span className="absolute inset-x-4 -bottom-1 h-0.5 rounded-t-full transition-transform duration-300 origin-left bg-gray-300 dark:bg-gray-600 scale-x-0 group-hover:scale-x-100"></span>
-                            </a>
+                            {navMenuItems.map((item, index) => {
+                                const active = isMenuItemActive(item);
+                                const isInternalInertia = item.url.startsWith('/') && !item.url.includes('#') && !item.open_in_new_tab;
+                                const linkClasses = `relative px-4 py-2 text-sm font-semibold transition-colors group ${
+                                    active
+                                        ? 'text-[#f82803] dark:text-red-400' 
+                                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                                }`;
+                                const indicator = (
+                                    <span className={`absolute inset-x-4 -bottom-1 h-0.5 rounded-t-full transition-transform duration-300 origin-left ${
+                                        active
+                                            ? 'bg-[#f82803] dark:bg-red-500 scale-x-100' 
+                                            : 'bg-gray-300 dark:bg-gray-600 scale-x-0 group-hover:scale-x-100'
+                                    }`}></span>
+                                );
+
+                                if (isInternalInertia) {
+                                    return (
+                                        <Link 
+                                            key={index}
+                                            href={item.url} 
+                                            onClick={() => handleMenuClick(item)}
+                                            className={linkClasses}
+                                        >
+                                            {item.label}
+                                            {indicator}
+                                        </Link>
+                                    );
+                                }
+
+                                return (
+                                    <a 
+                                        key={index}
+                                        href={item.url} 
+                                        onClick={() => handleMenuClick(item)}
+                                        target={item.open_in_new_tab ? '_blank' : undefined}
+                                        rel={item.open_in_new_tab ? 'noopener noreferrer' : undefined}
+                                        className={linkClasses}
+                                    >
+                                        {item.label}
+                                        {indicator}
+                                    </a>
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -106,7 +220,7 @@ export default function Navbar() {
                         <ThemeToggle />
                         
                         {/* WhatsApp Support Button */}
-                        {settings?.support_whatsapp && (
+                        {settings?.navbar_support_button_enabled !== false && settings?.support_whatsapp && (
                             <a 
                                 href={`https://wa.me/${settings.support_whatsapp.replace(/[^0-9]/g, '')}?text=Hello%20support,%20I%20need%20assistance.`}
                                 target="_blank"
@@ -237,15 +351,53 @@ export default function Navbar() {
             {/* Mobile Dropdown Menu */}
             <div className={`md:hidden absolute w-full bg-white dark:bg-[#111827] border-b border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-[85vh] overflow-y-auto opacity-100 border-t' : 'max-h-0 opacity-0 border-transparent'}`}>
                 <div className="px-4 py-4 space-y-1">
-                    <Link href="/" onClick={() => setMobileMenuOpen(false)} className={`block px-4 py-3 rounded-xl text-base font-semibold transition-colors ${isActive('/') ? 'bg-red-50 dark:bg-red-500/10 text-[#f82803] dark:text-red-400' : 'text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
-                        Home
-                    </Link>
-                    <a href="/#products" onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-xl text-base font-semibold text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        Products & Panels
-                    </a>
-                    <a href="/#reviews" onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-xl text-base font-semibold text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        Reviews
-                    </a>
+                    {navMenuItems.map((item, index) => {
+                        const active = isMenuItemActive(item);
+                        const isInternalInertia = item.url.startsWith('/') && !item.url.includes('#') && !item.open_in_new_tab;
+                        const mobileClasses = `block px-4 py-3 rounded-xl text-base font-semibold transition-colors ${
+                            active
+                                ? 'bg-red-50 dark:bg-red-500/10 text-[#f82803] dark:text-red-400' 
+                                : 'text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'
+                        }`;
+
+                        if (isInternalInertia) {
+                            return (
+                                <Link 
+                                    key={index}
+                                    href={item.url} 
+                                    onClick={() => { handleMenuClick(item); setMobileMenuOpen(false); }} 
+                                    className={mobileClasses}
+                                >
+                                    {item.label}
+                                </Link>
+                            );
+                        }
+
+                        return (
+                            <a 
+                                key={index}
+                                href={item.url} 
+                                onClick={() => { handleMenuClick(item); setMobileMenuOpen(false); }} 
+                                target={item.open_in_new_tab ? '_blank' : undefined}
+                                rel={item.open_in_new_tab ? 'noopener noreferrer' : undefined}
+                                className={mobileClasses}
+                            >
+                                {item.label}
+                            </a>
+                        );
+                    })}
+
+                    {settings?.navbar_support_button_enabled !== false && settings?.support_whatsapp && (
+                        <a 
+                            href={`https://wa.me/${settings.support_whatsapp.replace(/[^0-9]/g, '')}?text=Hello%20support,%20I%20need%20assistance.`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-base font-semibold border border-emerald-200 dark:border-emerald-500/20 my-1"
+                        >
+                            <MessageCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                            <span>WhatsApp Support</span>
+                        </a>
+                    )}
 
                     {customer ? (
                         <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 space-y-1">

@@ -164,6 +164,7 @@ test('super admin can update settings through filament form', function (): void 
             'referral_commission_percentage' => 7.5,
             'min_deposit_amount' => 100.0,
             'max_deposit_amount' => 25000.0,
+            'reviews_section_enabled' => false,
         ])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -172,7 +173,30 @@ test('super admin can update settings through filament form', function (): void 
         ->and(setting('support_email'))->toBe('support@kopasamsu.com')
         ->and(setting('referral_commission_percentage'))->toBe(7.5)
         ->and(setting('min_deposit_amount'))->toBe(100.0)
-        ->and(setting('max_deposit_amount'))->toBe(25000.0);
+        ->and(setting('max_deposit_amount'))->toBe(25000.0)
+        ->and(setting('reviews_section_enabled'))->toBeFalse();
+});
+
+test('super admin can update navbar menu items and support button through filament form', function (): void {
+    $superAdmin = User::factory()->create();
+    $superAdmin->assignRole('super_admin');
+
+    $customMenu = [
+        ['label' => 'Home', 'url' => '/', 'open_in_new_tab' => false, 'is_active' => true],
+        ['label' => 'Telegram Community', 'url' => 'https://t.me/example', 'open_in_new_tab' => true, 'is_active' => true],
+    ];
+
+    Livewire::actingAs($superAdmin)
+        ->test(ManageSettings::class)
+        ->fillForm([
+            'navbar_menu_items' => $customMenu,
+            'navbar_support_button_enabled' => false,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect(setting('navbar_support_button_enabled'))->toBeFalse()
+        ->and(setting('navbar_menu_items'))->toBe($customMenu);
 });
 
 test('flush cache header action successfully clears cache', function (): void {

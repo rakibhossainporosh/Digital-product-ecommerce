@@ -45,23 +45,45 @@ class StatsOverviewWidget extends BaseStatsOverviewWidget
             ->where('created_at', '>=', $thisMonth)
             ->count();
 
+        // 7-day sparkline trends
+        $salesTrend = [];
+        $depositsTrend = [];
+        $customersTrend = [];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->toDateString();
+            $salesTrend[] = (float) (Order::where('status', OrderStatus::Completed)
+                ->whereDate('created_at', $date)
+                ->sum('total_amount') ?? 0);
+            $depositsTrend[] = (float) (WalletTransaction::deposits()
+                ->whereDate('created_at', $date)
+                ->sum('amount') ?? 0);
+            $customersTrend[] = (int) (Customer::whereDate('created_at', $date)->count() ?? 0);
+        }
+
         return [
             Stat::make('Today\'s Sales', '৳ '.number_format((float) $todaySales, 2))
                 ->description('Net Profit: ৳ '.number_format((float) $todayNetProfit, 2))
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
+                ->chart($salesTrend)
                 ->color('success'),
 
             Stat::make('This Month\'s Sales', '৳ '.number_format((float) $thisMonthSales, 2))
-                ->description('Completed orders only')
+                ->description('Completed store revenue')
+                ->descriptionIcon('heroicon-m-shopping-bag')
+                ->chart($salesTrend)
                 ->color('primary'),
 
             Stat::make('Total Wallet Deposits', '৳ '.number_format((float) $totalDeposits, 2))
-                ->description('All time successful deposits')
+                ->description('All time customer top-ups')
+                ->descriptionIcon('heroicon-m-banknotes')
+                ->chart($depositsTrend)
                 ->color('warning'),
 
             Stat::make('New Customers', number_format($newCustomers))
                 ->description('Registered this month')
-                ->descriptionIcon('heroicon-m-users')
+                ->descriptionIcon('heroicon-m-user-plus')
+                ->chart($customersTrend)
                 ->color('info'),
         ];
     }

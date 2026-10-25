@@ -103,12 +103,21 @@ export default function ProductTopup({ product }) {
             if (res.ok && data.valid) {
                 setAppliedPromo(data);
                 setPromoError(null);
+                const discountText = data.discount_amount ? ` You saved ৳${data.discount_amount}!` : '';
+                window.dispatchEvent(
+                    new CustomEvent('app-toast', {
+                        detail: {
+                            type: 'success',
+                            message: `Coupon code "${data.code || promoCode.toUpperCase()}" applied successfully!${discountText}`,
+                        },
+                    })
+                );
             } else {
                 setAppliedPromo(null);
-                setPromoError(data.error || 'Invalid promo code');
+                setPromoError(data.error || 'Invalid or expired promo code.');
             }
         } catch (err) {
-            setPromoError('Failed to validate promo code.');
+            setPromoError('Unable to validate promo code. Please check your network connection.');
         } finally {
             setPromoLoading(false);
         }
@@ -123,7 +132,16 @@ export default function ProductTopup({ product }) {
         }
 
         if (isService && !serviceData.whatsapp_number) {
-            setSubmitError('Please provide your WhatsApp number for service communication.');
+            const msg = 'Please enter your WhatsApp contact number so our team can deliver your service.';
+            setSubmitError(msg);
+            window.dispatchEvent(
+                new CustomEvent('app-toast', {
+                    detail: {
+                        type: 'warning',
+                        message: msg,
+                    },
+                })
+            );
             return;
         }
 
@@ -142,7 +160,16 @@ export default function ProductTopup({ product }) {
         router.post(targetRoute, payload, {
             onError: (errors) => {
                 setIsSubmitting(false);
-                setSubmitError(Object.values(errors)[0] || 'Order checkout failed.');
+                const errMsg = Object.values(errors)[0] || 'Order checkout could not be completed. Please check your inputs and try again.';
+                setSubmitError(errMsg);
+                window.dispatchEvent(
+                    new CustomEvent('app-toast', {
+                        detail: {
+                            type: 'error',
+                            message: errMsg,
+                        },
+                    })
+                );
             },
             onFinish: () => {
                 setIsSubmitting(false);

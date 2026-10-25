@@ -227,8 +227,13 @@ class CustomersTable
                                 'reseller_discount' => $data['reseller_discount'] ?? null,
                             ]);
 
+                            $discountInfo = $record->is_reseller
+                                ? 'enabled with '.($record->reseller_discount ?? 0).'% discount.'
+                                : 'disabled.';
+
                             Notification::make()
-                                ->title('Reseller Status Updated')
+                                ->title('Reseller Privileges Updated')
+                                ->body("Wholesale reseller access for {$record->name} is now {$discountInfo}")
                                 ->success()
                                 ->send();
                         }),
@@ -254,8 +259,8 @@ class CustomersTable
                             ]);
 
                             Notification::make()
-                                ->title('Status Updated')
-                                ->body("Account status is now {$record->status->getLabel()}")
+                                ->title('Account Status Changed')
+                                ->body("{$record->name}'s account status has been updated to {$record->status->getLabel()}.")
                                 ->success()
                                 ->send();
                         }),

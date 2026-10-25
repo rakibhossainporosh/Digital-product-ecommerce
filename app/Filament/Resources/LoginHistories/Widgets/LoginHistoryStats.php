@@ -8,6 +8,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class LoginHistoryStats extends BaseWidget
 {
+    protected static bool $isLazy = false;
+
     protected function getStats(): array
     {
         $today = now()->startOfDay();

@@ -87,3 +87,12 @@ test('reseller customer sees discounted variant prices in storefront products', 
             ->where('products.0.variants.0.effective_price', 900) // 10% off 1000 = 900
         );
 });
+
+test('storefront shares navbar settings to inertia props', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('settings.navbar_menu_items')
+            ->has('settings.navbar_support_button_enabled')
+        );
+});

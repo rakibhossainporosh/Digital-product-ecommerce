@@ -20,17 +20,17 @@ class SalesReportPage extends Page
 {
     use WithPagination;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-chart-bar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar-square';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Finance & Wallet';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales & Orders';
 
-    protected static ?string $navigationLabel = 'Sell Report';
+    protected static ?string $navigationLabel = 'Sales Report';
 
-    protected static ?string $title = 'Sell Report';
+    protected static ?string $title = 'Sales Report';
 
     protected string $view = 'filament.pages.sales-report-page';
 
-    protected static ?int $sort = 5;
+    protected static ?int $navigationSort = 2;
 
     public ?string $startDate = null;
 

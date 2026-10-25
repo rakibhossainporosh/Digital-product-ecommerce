@@ -228,7 +228,8 @@ test('service order checkout with wallet keeps order in processing status withou
     $serviceProduct = Product::factory()->create(['type' => 'service']);
     $variant = ProductVariant::factory()->create([
         'product_id' => $serviceProduct->id,
-        'price' => 150.00,
+        'regular_price' => 150.00,
+        'offer_price' => 150.00,
     ]);
 
     $order = $orderService->createOrder($customer, $variant, 1, PaymentMethod::Wallet);

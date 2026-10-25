@@ -3,7 +3,9 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\LicenseKeyStatus;
+use App\Filament\Resources\LicenseKeys\LicenseKeyResource;
 use App\Models\ProductVariant;
+use Filament\Actions\Action;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -14,7 +16,11 @@ class LowStockWidget extends TableWidget
 {
     protected static ?int $sort = 5;
 
-    protected int|string|array $columnSpan = 'full';
+    protected int|string|array $columnSpan = [
+        'default' => 'full',
+        'md' => 1,
+        'xl' => 1,
+    ];
 
     protected static ?string $heading = 'Low Stock Alerts (≤ 5 Keys)';
 
@@ -45,6 +51,13 @@ class LowStockWidget extends TableWidget
                     ->badge()
                     ->color(fn (int $state): string => $state === 0 ? 'danger' : 'warning')
                     ->sortable(),
+            ])
+            ->actions([
+                Action::make('restock')
+                    ->label('Restock')
+                    ->icon('heroicon-m-plus-circle')
+                    ->color('warning')
+                    ->url(fn (): string => LicenseKeyResource::getUrl('index')),
             ])
             ->paginated(false);
     }

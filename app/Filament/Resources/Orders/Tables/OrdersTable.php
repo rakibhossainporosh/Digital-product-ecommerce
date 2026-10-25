@@ -157,14 +157,14 @@ class OrdersTable
 
                             if ($result['success']) {
                                 Notification::make()
-                                    ->title('Fulfillment Successful')
-                                    ->body("Delivered {$record->quantity} license key(s) to order #{$record->order_number}")
+                                    ->title('License Keys Delivered')
+                                    ->body("Successfully allocated and delivered {$record->quantity} license key(s) to order #{$record->order_number}.")
                                     ->success()
                                     ->send();
                             } else {
                                 Notification::make()
-                                    ->title('Fulfillment Failed')
-                                    ->body($result['error'] ?? 'Stock allocation failed.')
+                                    ->title('Key Fulfillment Failed')
+                                    ->body($result['error'] ?? 'Insufficient available keys in stock for this variant. Please restock keys first.')
                                     ->danger()
                                     ->send();
                             }
@@ -189,14 +189,14 @@ class OrdersTable
 
                             if ($result['success']) {
                                 Notification::make()
-                                    ->title('Service Fulfilled')
-                                    ->body("Service order #{$record->order_number} marked as fulfilled.")
+                                    ->title('Service Order Completed')
+                                    ->body("Service order #{$record->order_number} has been marked as fulfilled and completed.")
                                     ->success()
                                     ->send();
                             } else {
                                 Notification::make()
-                                    ->title('Fulfillment Failed')
-                                    ->body($result['error'] ?? 'Could not fulfill service order.')
+                                    ->title('Service Completion Failed')
+                                    ->body($result['error'] ?? 'Could not mark service order as completed.')
                                     ->danger()
                                     ->send();
                             }

@@ -107,10 +107,10 @@ class CheckoutController extends Controller
             $order->refresh();
 
             if ($order->isService()) {
-                return redirect()->route('customer.orders')->with('success', "Order #{$order->order_number} placed successfully! Our support team will process your service shortly.");
+                return redirect()->route('customer.orders')->with('success', "Order #{$order->order_number} received! Our support engineers will contact you on WhatsApp to configure and complete your service.");
             }
 
-            return redirect()->route('customer.keys')->with('success', "Order #{$order->order_number} completed! Your license keys have been delivered.");
+            return redirect()->route('customer.keys')->with('success', "Payment confirmed! Order #{$order->order_number} has been completed and your license key(s) are ready in 'My Keys'.");
         } catch (Exception $e) {
             return back()->with('error', $e->getMessage());
         }

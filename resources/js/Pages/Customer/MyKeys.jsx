@@ -29,6 +29,14 @@ export default function MyKeys({ keys }) {
     const handleCopy = (keyStr, id) => {
         navigator.clipboard.writeText(keyStr);
         setCopiedId(id);
+        window.dispatchEvent(
+            new CustomEvent('app-toast', {
+                detail: {
+                    type: 'success',
+                    message: 'License key copied to clipboard! Ready to paste and activate.',
+                },
+            })
+        );
         setTimeout(() => setCopiedId(null), 2000);
     };
 

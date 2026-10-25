@@ -175,12 +175,16 @@ export default function Home({ sliders, categories, products, recentOrders, acti
             </div>
 
             {/* Verified Customer Feedback Section */}
-            <CustomerReviews />
+            {settings?.reviews_section_enabled !== false && (
+                <>
+                    <CustomerReviews />
 
-            {/* Divider */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <hr className="border-gray-200 dark:border-gray-800/60 my-4 sm:my-6" />
-            </div>
+                    {/* Divider */}
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <hr className="border-gray-200 dark:border-gray-800/60 my-4 sm:my-6" />
+                    </div>
+                </>
+            )}
 
             {/* Recent Orders Table (Placed at bottom for professional look) */}
             <RecentOrdersTable orders={recentOrders} />

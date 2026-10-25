@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Orders\RelationManagers;
 
 use App\Models\LicenseKey;
+use App\Models\Order;
 use App\Services\LicenseKeyStockService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
@@ -11,6 +12,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class LicenseKeysRelationManager extends RelationManager
 {
@@ -19,6 +21,12 @@ class LicenseKeysRelationManager extends RelationManager
     protected static ?string $title = 'Delivered License Keys';
 
     protected static string|\BackedEnum|null $icon = 'heroicon-o-key';
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        /** @var Order $ownerRecord */
+        return ! $ownerRecord->isService();
+    }
 
     public function table(Table $table): Table
     {
@@ -69,8 +77,8 @@ class LicenseKeysRelationManager extends RelationManager
                         $stockService->revokeKey($record, $data['reason']);
 
                         Notification::make()
-                            ->title('License Key Revoked')
-                            ->body('Key has been marked as revoked.')
+                            ->title('Delivered Key Revoked')
+                            ->body("License key '{$record->key}' has been revoked from this order.")
                             ->warning()
                             ->send();
                     }),

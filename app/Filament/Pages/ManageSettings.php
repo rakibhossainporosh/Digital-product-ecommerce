@@ -7,6 +7,7 @@ use App\Services\SettingService;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -28,9 +29,9 @@ class ManageSettings extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'System';
+    protected static string|\UnitEnum|null $navigationGroup = 'System & Settings';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $slug = 'settings';
 
@@ -58,6 +59,19 @@ class ManageSettings extends Page
     public function mount(SettingService $settingService): void
     {
         $settings = $settingService->all();
+
+        if (empty($settings['navbar_menu_items'])) {
+            $settings['navbar_menu_items'] = [
+                ['label' => 'Home', 'url' => '/', 'open_in_new_tab' => false, 'is_active' => true],
+                ['label' => 'Products', 'url' => '/#products', 'open_in_new_tab' => false, 'is_active' => true],
+                ['label' => 'Reviews', 'url' => '/#reviews', 'open_in_new_tab' => false, 'is_active' => true],
+            ];
+        }
+
+        if (! isset($settings['navbar_support_button_enabled'])) {
+            $settings['navbar_support_button_enabled'] = true;
+        }
+
         $this->form->fill($settings);
     }
 
@@ -162,7 +176,61 @@ class ManageSettings extends Page
                                     ]),
                             ]),
 
-                        Tab::make('Feature Highlights')
+                        Tab::make('Navbar & Navigation')
+                            ->icon('heroicon-m-bars-3')
+                            ->schema([
+                                Section::make('Storefront Navbar Menu')
+                                    ->description('Customize, reorder, add, or remove navigation links shown in the top navbar and mobile drawer.')
+                                    ->schema([
+                                        Repeater::make('navbar_menu_items')
+                                            ->label('Navbar Menu Links')
+                                            ->default([
+                                                ['label' => 'Home', 'url' => '/', 'open_in_new_tab' => false, 'is_active' => true],
+                                                ['label' => 'Products', 'url' => '/#products', 'open_in_new_tab' => false, 'is_active' => true],
+                                                ['label' => 'Reviews', 'url' => '/#reviews', 'open_in_new_tab' => false, 'is_active' => true],
+                                            ])
+                                            ->schema([
+                                                Grid::make(12)->schema([
+                                                    TextInput::make('label')
+                                                        ->label('Menu Label')
+                                                        ->placeholder('e.g. Home, Products, Telegram')
+                                                        ->required()
+                                                        ->columnSpan(4)
+                                                        ->maxLength(50),
+
+                                                    TextInput::make('url')
+                                                        ->label('Link URL / Path')
+                                                        ->placeholder('e.g. /, /#products, https://t.me/...')
+                                                        ->required()
+                                                        ->columnSpan(5)
+                                                        ->maxLength(255),
+
+                                                    Toggle::make('open_in_new_tab')
+                                                        ->label('New Tab')
+                                                        ->default(false)
+                                                        ->columnSpan(2),
+
+                                                    Toggle::make('is_active')
+                                                        ->label('Active')
+                                                        ->default(true)
+                                                        ->columnSpan(1),
+                                                ]),
+                                            ])
+                                            ->itemLabel(fn (array $state): ?string => ($state['label'] ?? 'New Item').(! empty($state['url']) ? ' ('.$state['url'].')' : ''))
+                                            ->reorderable()
+                                            ->reorderableWithButtons()
+                                            ->collapsible()
+                                            ->addActionLabel('Add New Menu Item')
+                                            ->helperText('Drag or use buttons to reorder links. Use "#products" or "#reviews" for homepage section scroll.'),
+
+                                        Toggle::make('navbar_support_button_enabled')
+                                            ->label('Display WhatsApp Support Button in Navbar')
+                                            ->helperText('Show or hide the green WhatsApp Support button in the navbar.')
+                                            ->default(true),
+                                    ]),
+                            ]),
+
+                        Tab::make('Features & Reviews')
                             ->icon('heroicon-m-sparkles')
                             ->schema([
                                 Section::make('Homepage Feature Cards Ribbon')
@@ -234,6 +302,15 @@ class ManageSettings extends Page
                                                         ->maxLength(80),
                                                 ]),
                                         ]),
+                                    ]),
+
+                                Section::make('Customer Reviews Section')
+                                    ->description('Turn on/off the verified customer feedback and rating carousel on the homepage.')
+                                    ->schema([
+                                        Toggle::make('reviews_section_enabled')
+                                            ->label('Display Customer Reviews Section')
+                                            ->helperText('Enable to display the customer reviews and rating carousel on the storefront homepage. Disable to completely hide this section.')
+                                            ->default(true),
                                     ]),
                             ]),
 
@@ -524,7 +601,11 @@ class ManageSettings extends Page
             'top_bar_notice_label' => ['group' => 'general', 'type' => 'string', 'is_public' => true],
             'top_bar_notice_text' => ['group' => 'general', 'type' => 'string', 'is_public' => true],
 
+            'navbar_menu_items' => ['group' => 'navigation', 'type' => 'json', 'is_public' => true],
+            'navbar_support_button_enabled' => ['group' => 'navigation', 'type' => 'boolean', 'is_public' => true],
+
             'features_ribbon_enabled' => ['group' => 'features', 'type' => 'boolean', 'is_public' => true],
+            'reviews_section_enabled' => ['group' => 'features', 'type' => 'boolean', 'is_public' => true],
             'feature_1_title' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
             'feature_1_subtitle' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
             'feature_2_title' => ['group' => 'features', 'type' => 'string', 'is_public' => true],
@@ -569,7 +650,11 @@ class ManageSettings extends Page
             }
 
             if (is_array($val)) {
-                $val = array_values($val)[0] ?? null;
+                if (($definitions[$key]['type'] ?? null) === 'json') {
+                    $val = array_values($val);
+                } else {
+                    $val = array_values($val)[0] ?? null;
+                }
             }
 
             $def = $definitions[$key];

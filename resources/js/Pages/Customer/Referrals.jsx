@@ -23,12 +23,28 @@ export default function Referrals({ referralCode, referralUrl, referralRate, ref
     const handleCopyLink = () => {
         navigator.clipboard.writeText(referralUrl);
         setCopiedLink(true);
+        window.dispatchEvent(
+            new CustomEvent('app-toast', {
+                detail: {
+                    type: 'success',
+                    message: 'Referral link copied! Share with friends to earn commission.',
+                },
+            })
+        );
         setTimeout(() => setCopiedLink(false), 2500);
     };
 
     const handleCopyCode = () => {
         navigator.clipboard.writeText(referralCode);
         setCopiedCode(true);
+        window.dispatchEvent(
+            new CustomEvent('app-toast', {
+                detail: {
+                    type: 'success',
+                    message: `Referral code "${referralCode}" copied to clipboard!`,
+                },
+            })
+        );
         setTimeout(() => setCopiedCode(false), 2500);
     };
 

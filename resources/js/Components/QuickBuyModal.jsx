@@ -220,12 +220,21 @@ export default function QuickBuyModal({ product, isOpen, onClose }) {
             if (res.ok && data.valid) {
                 setAppliedPromo(data);
                 setPromoError(null);
+                const discountText = data.discount_amount ? ` You saved ৳${data.discount_amount}!` : '';
+                window.dispatchEvent(
+                    new CustomEvent('app-toast', {
+                        detail: {
+                            type: 'success',
+                            message: `Coupon code "${data.code || promoInput.toUpperCase()}" applied successfully!${discountText}`,
+                        },
+                    })
+                );
             } else {
                 setAppliedPromo(null);
-                setPromoError(data.error || 'Invalid promo code');
+                setPromoError(data.error || 'Invalid or expired promo code.');
             }
         } catch {
-            setPromoError('Failed to validate promo code.');
+            setPromoError('Unable to validate promo code. Please check your network connection.');
         } finally {
             setPromoLoading(false);
         }
@@ -235,6 +244,14 @@ export default function QuickBuyModal({ product, isOpen, onClose }) {
         setAppliedPromo(null);
         setPromoInput('');
         setPromoError(null);
+        window.dispatchEvent(
+            new CustomEvent('app-toast', {
+                detail: {
+                    type: 'info',
+                    message: 'Coupon code removed from this order.',
+                },
+            })
+        );
     };
 
     // Checkout submission
@@ -247,12 +264,30 @@ export default function QuickBuyModal({ product, isOpen, onClose }) {
         }
 
         if (isService && !serviceData.whatsapp_number.trim()) {
-            setSubmitError('Please enter your WhatsApp number for service communication.');
+            const msg = 'Please enter your WhatsApp contact number so our team can deliver your service.';
+            setSubmitError(msg);
+            window.dispatchEvent(
+                new CustomEvent('app-toast', {
+                    detail: {
+                        type: 'warning',
+                        message: msg,
+                    },
+                })
+            );
             return;
         }
 
         if (paymentMethod === 'wallet' && !hasEnoughWalletBalance) {
-            setSubmitError('Insufficient wallet balance. Please select Online Gateway or deposit into your wallet.');
+            const msg = 'Insufficient wallet balance. Please choose Online Payment or top up your wallet balance.';
+            setSubmitError(msg);
+            window.dispatchEvent(
+                new CustomEvent('app-toast', {
+                    detail: {
+                        type: 'warning',
+                        message: msg,
+                    },
+                })
+            );
             return;
         }
 
@@ -271,7 +306,16 @@ export default function QuickBuyModal({ product, isOpen, onClose }) {
         router.post(targetRoute, payload, {
             onError: (errors) => {
                 setIsSubmitting(false);
-                setSubmitError(Object.values(errors)[0] || 'Order checkout failed. Please try again.');
+                const errMsg = Object.values(errors)[0] || 'Order checkout could not be processed. Please check your inputs and try again.';
+                setSubmitError(errMsg);
+                window.dispatchEvent(
+                    new CustomEvent('app-toast', {
+                        detail: {
+                            type: 'error',
+                            message: errMsg,
+                        },
+                    })
+                );
             },
             onFinish: () => {
                 setIsSubmitting(false);

@@ -95,6 +95,28 @@ class SettingSeeder extends Seeder
                 'description' => 'Scrolling text displayed in the top bar marquee',
             ],
 
+            // Navbar & Navigation
+            [
+                'group' => 'navigation',
+                'key' => 'navbar_menu_items',
+                'value' => [
+                    ['label' => 'Home', 'url' => '/', 'open_in_new_tab' => false, 'is_active' => true],
+                    ['label' => 'Products', 'url' => '/#products', 'open_in_new_tab' => false, 'is_active' => true],
+                    ['label' => 'Reviews', 'url' => '/#reviews', 'open_in_new_tab' => false, 'is_active' => true],
+                ],
+                'type' => 'json',
+                'is_public' => true,
+                'description' => 'Storefront navbar navigation links and order',
+            ],
+            [
+                'group' => 'navigation',
+                'key' => 'navbar_support_button_enabled',
+                'value' => true,
+                'type' => 'boolean',
+                'is_public' => true,
+                'description' => 'Toggle WhatsApp support button in navbar',
+            ],
+
             // Feature Highlights Ribbon
             [
                 'group' => 'features',
@@ -103,6 +125,14 @@ class SettingSeeder extends Seeder
                 'type' => 'boolean',
                 'is_public' => true,
                 'description' => 'Toggle feature highlights ribbon on/off',
+            ],
+            [
+                'group' => 'features',
+                'key' => 'reviews_section_enabled',
+                'value' => true,
+                'type' => 'boolean',
+                'is_public' => true,
+                'description' => 'Toggle customer reviews section on/off on homepage',
             ],
             [
                 'group' => 'features',

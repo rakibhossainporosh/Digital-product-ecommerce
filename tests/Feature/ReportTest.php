@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
 use App\Filament\Pages\SalesReportPage;
 use App\Filament\Widgets\LowStockWidget;
 use App\Filament\Widgets\OrderStatusChartWidget;
@@ -88,6 +90,10 @@ it('renders sales report table with order and variant records', function () {
         'product_id' => $product->id,
         'product_variant_id' => $variant->id,
         'total_amount' => 1500,
+        'gateway_amount_paid' => 1500,
+        'wallet_amount_paid' => 0,
+        'payment_method' => PaymentMethod::Gateway,
+        'status' => OrderStatus::Completed,
         'cost_price' => 800,
         'quantity' => 1,
     ]);
@@ -99,8 +105,8 @@ it('renders sales report table with order and variant records', function () {
         ->assertSee('Windows 11 Pro')
         ->assertSee('Lifetime License')
         ->assertSee('John Doe')
-        ->call('setRightTab', 'deposits')
-        ->assertSet('activeRightTab', 'deposits')
+        ->call('setActiveTab', 'wallet_deposits')
+        ->assertSet('activeTab', 'wallet_deposits')
         ->call('resetFilters')
         ->assertSet('productId', null);
 });

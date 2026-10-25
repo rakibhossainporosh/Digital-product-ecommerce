@@ -21,7 +21,7 @@ class LoginHistoryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Security & Audit';
+    protected static string|\UnitEnum|null $navigationGroup = 'Access & Security';
 
     protected static ?string $navigationLabel = 'Audit Logs';
 
@@ -29,7 +29,7 @@ class LoginHistoryResource extends Resource
 
     protected static ?string $modelLabel = 'Audit Log';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 3;
 
     public static function canCreate(): bool
     {

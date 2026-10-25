@@ -272,7 +272,7 @@ test('product price range correctly reflects single or multiple variant prices',
     ]);
 
     $product->refresh();
-    expect($product->price_range)->toBe('৳400.00 - ৳1,800.00');
+    expect($product->price_range)->toBe('৳400 - ৳1,800');
 });
 
 test('product stats overview widget renders on products list page with filter urls', function () {

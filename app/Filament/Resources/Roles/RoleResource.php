@@ -43,12 +43,22 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): string|\UnitEnum|null
     {
-        return 'Access Management';
+        return 'Access & Security';
     }
 
     public static function getNavigationSort(): ?int
     {
         return 2;
+    }
+
+    public static function getNavigationIcon(): string|\BackedEnum|null
+    {
+        return 'heroicon-o-lock-closed';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Roles & Permissions';
     }
 
     #[Override]

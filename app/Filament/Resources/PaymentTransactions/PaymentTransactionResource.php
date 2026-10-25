@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PaymentTransactions;
 
+use App\Enums\PaymentStatus;
 use App\Filament\Resources\PaymentTransactions\Pages\ListPaymentTransactions;
 use App\Filament\Resources\PaymentTransactions\Pages\ViewPaymentTransaction;
 use App\Filament\Resources\PaymentTransactions\Schemas\PaymentTransactionForm;
@@ -23,7 +24,26 @@ class PaymentTransactionResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Finance & Wallet';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationLabel = 'Transactions';
+
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::where('status', PaymentStatus::Pending)->count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'warning';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Pending payment transactions';
+    }
 
     public static function canCreate(): bool
     {
