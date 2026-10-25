@@ -316,22 +316,22 @@ export default function ProductTopup({ product }) {
                         </div>
 
                         {/* 2. Step 1: Select Duration & License Package */}
-                        <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-800/80 shadow-md space-y-4">
-                            <div className="flex items-center justify-between gap-1.5 sm:gap-2">
+                        <div className="glass-panel p-3.5 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-800/80 shadow-md space-y-3 sm:space-y-4">
+                            <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
                                     <span className="w-5 h-5 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl bg-gradient-to-br from-[#f82803] to-[#990a0a] text-white flex items-center justify-center text-[10px] sm:text-xs font-black shadow-md shadow-red-500/20 shrink-0">
                                         1
                                     </span>
-                                    <h2 className="text-xs sm:text-base font-bold text-gray-900 dark:text-white font-display whitespace-nowrap">
-                                        Select Duration & License Package
+                                    <h2 className="text-xs sm:text-base font-bold text-gray-900 dark:text-white font-display truncate">
+                                        Select Duration & Package
                                     </h2>
                                 </div>
-                                <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap shrink-0">
-                                    {product.variants.length} Options Available
+                                <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap shrink-0 font-mono">
+                                    {product.variants.length} Option{product.variants.length > 1 ? 's' : ''}
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3.5">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3.5">
                                 {product.variants.map((variant) => {
                                     const isSelected = variant.id === selectedVariantId;
                                     return (
@@ -342,15 +342,15 @@ export default function ProductTopup({ product }) {
                                                 setSelectedVariantId(variant.id);
                                                 setAppliedPromo(null);
                                             }}
-                                            className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 text-left transition-all relative flex flex-col justify-between space-y-2.5 sm:space-y-3 group cursor-pointer ${
+                                            className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border-2 text-left transition-all relative flex flex-col justify-between space-y-1.5 sm:space-y-3 group cursor-pointer ${
                                                 isSelected
-                                                    ? 'bg-gradient-to-b from-red-50 via-white to-red-50/50 dark:from-red-950/70 dark:via-slate-900 dark:to-slate-900/90 border-[#f82803] shadow-xl shadow-red-500/15 scale-[1.02]'
+                                                    ? 'bg-gradient-to-b from-red-50 via-white to-red-50/50 dark:from-red-950/70 dark:via-slate-900 dark:to-slate-900/90 border-[#f82803] shadow-lg shadow-red-500/15 scale-[1.01]'
                                                     : 'bg-white dark:bg-gray-900/60 hover:bg-gray-50 dark:hover:bg-gray-800/60 border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700'
                                             }`}
                                         >
                                             {/* Popular Badge */}
                                             {variant.is_popular && (
-                                                <span className="absolute -top-2.5 sm:-top-3 right-2 sm:right-3 px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-black shadow-md shadow-amber-500/20">
+                                                <span className="absolute -top-2 sm:-top-2.5 right-2 sm:right-3 px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-black shadow-xs z-10 pointer-events-none">
                                                     Best Value
                                                 </span>
                                             )}
@@ -368,33 +368,35 @@ export default function ProductTopup({ product }) {
                                                 </div>
 
                                                 {/* Selection Indicator Circle */}
-                                                <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                                                <div className={`w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
                                                     isSelected 
-                                                        ? 'border-[#f82803] bg-[#f82803] text-white shadow-sm shadow-red-500/30' 
+                                                        ? 'border-[#f82803] bg-[#f82803] text-white shadow-xs shadow-red-500/30' 
                                                         : 'border-gray-300 dark:border-gray-700 group-hover:border-gray-400'
                                                 }`}>
-                                                    {isSelected && <Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 stroke-[3]" />}
+                                                    {isSelected && <Check className="w-2 h-2 sm:w-3.5 sm:h-3.5 stroke-[3]" />}
                                                 </div>
                                             </div>
 
                                             {/* Price & Savings */}
                                             <div className="pt-1.5 sm:pt-2 border-t border-gray-100 dark:border-gray-800/80">
-                                                <div className="flex items-baseline flex-wrap gap-1 sm:gap-2">
-                                                    <span className="text-base sm:text-xl font-black font-mono text-[#f82803] dark:text-red-400 whitespace-nowrap">
-                                                        {variant.formatted_price}
-                                                    </span>
+                                                <div className="flex items-baseline justify-between flex-wrap gap-x-1.5 gap-y-0.5">
+                                                    <div className="flex items-baseline gap-1 sm:gap-2">
+                                                        <span className="text-sm sm:text-xl font-black font-mono text-[#f82803] dark:text-red-400 whitespace-nowrap">
+                                                            {variant.formatted_price}
+                                                        </span>
+                                                        {variant.discount_percent > 0 && (
+                                                            <span className="text-[10px] sm:text-xs text-gray-400 line-through font-mono whitespace-nowrap">
+                                                                {variant.formatted_regular_price}
+                                                            </span>
+                                                        )}
+                                                    </div>
+
                                                     {variant.discount_percent > 0 && (
-                                                        <span className="text-[10px] sm:text-xs text-gray-400 line-through font-mono whitespace-nowrap">
-                                                            {variant.formatted_regular_price}
+                                                        <span className="text-[8px] sm:text-[10px] px-1 sm:px-1.5 py-0.2 sm:py-0.5 rounded-sm sm:rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold whitespace-nowrap">
+                                                            Save {variant.discount_percent}%
                                                         </span>
                                                     )}
                                                 </div>
-
-                                                {variant.discount_percent > 0 && (
-                                                    <span className="inline-block mt-1 text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-bold whitespace-nowrap">
-                                                        Save {variant.discount_percent}% OFF
-                                                    </span>
-                                                )}
                                             </div>
                                         </button>
                                     );

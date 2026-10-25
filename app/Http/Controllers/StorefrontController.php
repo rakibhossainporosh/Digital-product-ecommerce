@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\FulfillmentStatus;
 use App\Enums\LicenseKeyStatus;
+use App\Enums\OrderStatus;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
@@ -35,14 +37,51 @@ class StorefrontController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        $customer = auth('customer')->user();
+
         $products = Product::where('status', true)
-            ->with(['category', 'variants' => fn ($q) => $q->orderBy('regular_price')])
+            ->with([
+                'category',
+                'variants' => fn ($q) => $q->withCount([
+                    'licenseKeys as available_keys' => fn ($k) => $k->where('status', LicenseKeyStatus::Available),
+                ])->orderBy('regular_price'),
+            ])
             ->when($selectedCategory, fn ($q, $slug) => $q->whereHas('category', fn ($c) => $c->where('slug', $slug)))
             ->orderBy('sort_order')
             ->get()
-            ->map(function (Product $product) {
+            ->map(function (Product $product) use ($customer) {
                 $minPrice = $product->variants->min(fn ($v) => $v->offer_price ?? $v->regular_price);
                 $hasStock = $product->isService() || $product->variants->some(fn ($v) => $v->availableLicenseKeys()->exists() || filled($v->api_provider_id));
+
+                $variants = $product->variants->map(function ($variant) use ($customer) {
+                    $effectivePrice = (float) ($variant->offer_price ?? $variant->regular_price);
+                    $regularPrice = (float) $variant->regular_price;
+
+                    // Apply reseller discount if customer is an approved reseller
+                    if ($customer?->is_reseller && $customer->reseller_discount > 0) {
+                        $discountMultiplier = (100 - (float) $customer->reseller_discount) / 100;
+                        $effectivePrice = round($effectivePrice * $discountMultiplier, 2);
+                    }
+
+                    $discountPercent = $regularPrice > $effectivePrice && $regularPrice > 0
+                        ? round((($regularPrice - $effectivePrice) / $regularPrice) * 100)
+                        : 0;
+
+                    return [
+                        'id' => $variant->id,
+                        'duration_name' => $variant->duration_name,
+                        'duration_days' => $variant->duration_days,
+                        'regular_price' => $regularPrice,
+                        'offer_price' => $variant->offer_price !== null ? (float) $variant->offer_price : null,
+                        'effective_price' => $effectivePrice,
+                        'formatted_price' => '৳ '.number_format($effectivePrice, 0),
+                        'formatted_regular_price' => '৳ '.number_format($regularPrice, 0),
+                        'discount_percent' => $discountPercent,
+                        'is_popular' => (bool) $variant->is_popular,
+                        'available_stock' => $variant->available_keys ?? 0,
+                        'has_supplier_api' => filled($variant->api_provider_id),
+                    ];
+                });
 
                 return [
                     'id' => $product->id,
@@ -51,7 +90,7 @@ class StorefrontController extends Controller
                     'type' => $product->type ?? 'digital_key',
                     'is_service' => $product->isService(),
                     'is_maintenance' => $product->is_maintenance,
-                    'has_setup_file' => !empty($product->setup_file_path) || !empty($product->setup_link),
+                    'has_setup_file' => ! empty($product->setup_file_path) || ! empty($product->setup_link),
                     'setup_file_url' => $product->setup_link ?: ($product->setup_file_path ? asset('storage/'.$product->setup_file_path) : null),
                     'image_url' => $product->image ? asset('storage/'.$product->image) : null,
                     'icon' => $product->icon,
@@ -59,6 +98,7 @@ class StorefrontController extends Controller
                     'min_price' => $minPrice ?? 0,
                     'formatted_min_price' => '৳ '.number_format((float) ($minPrice ?? 0), 0),
                     'variants_count' => $product->variants->count(),
+                    'variants' => $variants,
                     'demo_video_url' => $product->demo_video_url,
                     'features' => $product->features_list,
                     'has_stock' => $hasStock,
@@ -70,8 +110,8 @@ class StorefrontController extends Controller
                 ];
             });
 
-        $recentOrders = Order::where('status', \App\Enums\OrderStatus::Completed)
-            ->orWhere('fulfillment_status', \App\Enums\FulfillmentStatus::Fulfilled)
+        $recentOrders = Order::where('status', OrderStatus::Completed)
+            ->orWhere('fulfillment_status', FulfillmentStatus::Fulfilled)
             ->with(['customer', 'product'])
             ->latest('created_at')
             ->take(3)
@@ -80,16 +120,16 @@ class StorefrontController extends Controller
                 // Mask customer name for privacy (e.g., "Md Hasan" -> "Md H***")
                 $name = $order->customer ? $order->customer->name : 'Guest';
                 $parts = explode(' ', $name);
-                $maskedName = count($parts) > 1 
-                    ? $parts[0] . ' ' . substr($parts[1], 0, 1) . '***'
-                    : substr($name, 0, 2) . '***';
+                $maskedName = count($parts) > 1
+                    ? $parts[0].' '.substr($parts[1], 0, 1).'***'
+                    : substr($name, 0, 2).'***';
 
                 return [
                     'id' => $order->id,
                     'customer_name' => $maskedName,
                     'product_name' => $order->product ? $order->product->name : 'Unknown Product',
                     'amount' => $order->total_amount,
-                    'time_ago' => $order->created_at->diffForHumans(null, true, true) . ' ago',
+                    'time_ago' => $order->created_at->diffForHumans(null, true, true).' ago',
                 ];
             });
 
@@ -156,7 +196,7 @@ class StorefrontController extends Controller
                 'type' => $product->type ?? 'digital_key',
                 'is_service' => $product->isService(),
                 'is_maintenance' => $product->is_maintenance,
-                'has_setup_file' => !empty($product->setup_file_path) || !empty($product->setup_link),
+                'has_setup_file' => ! empty($product->setup_file_path) || ! empty($product->setup_link),
                 'setup_file_url' => $product->setup_link ?: ($product->setup_file_path ? asset('storage/'.$product->setup_file_path) : null),
                 'image_url' => $product->image ? asset('storage/'.$product->image) : null,
                 'demo_video_url' => $product->demo_video_url,

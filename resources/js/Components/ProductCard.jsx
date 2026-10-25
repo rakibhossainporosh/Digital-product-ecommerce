@@ -1,15 +1,21 @@
 import React from 'react';
-import { Link } from '@inertiajs/react';
-import { ShoppingCart, Play, Zap, ShieldCheck, Wrench, Smartphone } from 'lucide-react';
+import { Link, router } from '@inertiajs/react';
+import { ShoppingCart, Play, Zap, Wrench, Smartphone } from 'lucide-react';
 
-export default function ProductCard({ product }) {
-    const isService = product.is_service || product.type === 'service';
+export default function ProductCard({ product, onBuyNow }) {
+    const isService = Boolean(product.is_service || product.type === 'service');
+
+    const handleCardClick = () => {
+        router.visit(`/product/${product.slug}`);
+    };
 
     return (
-        <div className="glass-card rounded-xl sm:rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800/90 hover:border-red-500/40 transition-all duration-300 flex flex-col group relative">
+        <div 
+            onClick={handleCardClick}
+            className="glass-card rounded-xl sm:rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800/90 hover:border-red-500/40 transition-all duration-300 flex flex-col group relative cursor-pointer"
+        >
             {/* Top Image & Badges Container */}
-            <Link 
-                href={`/product/${product.slug}`}
+            <div 
                 className="relative aspect-[16/10] w-full overflow-hidden bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 dark:from-slate-900 dark:via-gray-900 dark:to-[#0d1527] flex items-center justify-center p-2 sm:p-3 block"
             >
                 {product.image_url ? (
@@ -59,16 +65,14 @@ export default function ProductCard({ product }) {
                         </span>
                     )}
                 </div>
-            </Link>
+            </div>
 
             {/* Content Section */}
             <div className="p-2.5 sm:p-5 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
                 <div className="space-y-1.5 sm:space-y-2">
-                    <Link href={`/product/${product.slug}`} className="block group-hover:text-red-400 transition-colors">
-                        <h3 className="font-display font-bold text-gray-900 dark:text-white text-xs sm:text-base md:text-lg line-clamp-2 leading-tight">
-                            {product.name}
-                        </h3>
-                    </Link>
+                    <h3 className="font-display font-bold text-gray-900 dark:text-white text-xs sm:text-base md:text-lg line-clamp-2 leading-tight group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors">
+                        {product.name}
+                    </h3>
 
                     {/* Features list pills */}
                     {product.features && product.features.length > 0 ? (
@@ -107,6 +111,7 @@ export default function ProductCard({ product }) {
                                 target="_blank"
                                 rel="noreferrer"
                                 title="Watch Setup Video"
+                                onClick={(e) => e.stopPropagation()}
                                 className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 flex items-center justify-center transition-colors"
                             >
                                 <Play className="w-3 h-3 sm:w-4 sm:h-4 fill-current ml-0.5" />
@@ -115,20 +120,30 @@ export default function ProductCard({ product }) {
 
                         {product.is_maintenance ? (
                             <button
+                                type="button"
                                 disabled
+                                onClick={(e) => e.stopPropagation()}
                                 className="px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30 font-bold text-[10px] sm:text-sm flex items-center gap-1 sm:gap-1.5 cursor-not-allowed whitespace-nowrap shadow-xs"
                             >
                                 <Wrench className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
                                 <span className="whitespace-nowrap">Updating</span>
                             </button>
                         ) : (
-                            <Link
-                                href={`/product/${product.slug}`}
-                                className="px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-gradient-to-br from-[#f82803] to-[#730505] hover:from-[#ff411a] hover:to-[#8f0909] text-white font-bold text-[10px] sm:text-sm flex items-center gap-1 sm:gap-1.5 shadow-md shadow-red-500/20 transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onBuyNow) {
+                                        onBuyNow(product);
+                                    } else {
+                                        router.visit(`/product/${product.slug}`);
+                                    }
+                                }}
+                                className="px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-gradient-to-br from-[#f82803] to-[#730505] hover:from-[#ff411a] hover:to-[#8f0909] text-white font-bold text-[10px] sm:text-sm flex items-center gap-1 sm:gap-1.5 shadow-md shadow-red-500/20 transition-all hover:scale-105 active:scale-95 whitespace-nowrap cursor-pointer"
                             >
                                 <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                                 <span className="whitespace-nowrap">Buy Now</span>
-                            </Link>
+                            </button>
                         )}
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import AppLayout from '../Layouts/AppLayout';
 import HeroSlider from '../Components/HeroSlider';
 import CategoryTabs from '../Components/CategoryTabs';
 import ProductCard from '../Components/ProductCard';
+import QuickBuyModal from '../Components/QuickBuyModal';
 import CustomerReviews from '../Components/CustomerReviews';
 import { Search, Zap, Shield, Headphones, Smartphone, Sparkles, Filter } from 'lucide-react';
 
@@ -12,6 +13,7 @@ import RecentOrdersTable from '../Components/RecentOrdersTable';
 export default function Home({ sliders, categories, products, recentOrders, activeCategory }) {
     const { settings } = usePage().props;
     const [searchQuery, setSearchQuery] = useState('');
+    const [quickBuyProduct, setQuickBuyProduct] = useState(null);
 
     const handleCategorySelect = (categorySlug) => {
         router.get('/', categorySlug ? { category: categorySlug } : {}, {
@@ -147,7 +149,11 @@ export default function Home({ sliders, categories, products, recentOrders, acti
                 {filteredProducts.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
                         {filteredProducts.map((product) => (
-                            <ProductCard key={product.id} product={product} />
+                            <ProductCard 
+                                key={product.id} 
+                                product={product} 
+                                onBuyNow={(prod) => setQuickBuyProduct(prod)}
+                            />
                         ))}
                     </div>
                 ) : (
@@ -178,6 +184,13 @@ export default function Home({ sliders, categories, products, recentOrders, acti
 
             {/* Recent Orders Table (Placed at bottom for professional look) */}
             <RecentOrdersTable orders={recentOrders} />
+
+            {/* Quick Buy Modal */}
+            <QuickBuyModal 
+                product={quickBuyProduct} 
+                isOpen={Boolean(quickBuyProduct)} 
+                onClose={() => setQuickBuyProduct(null)} 
+            />
         </AppLayout>
     );
 }
