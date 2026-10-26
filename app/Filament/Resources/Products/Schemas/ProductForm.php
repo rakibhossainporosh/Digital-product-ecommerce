@@ -161,7 +161,6 @@ class ProductForm
                                             ->label('Product Setup File (Optional)')
                                             ->directory('product-setups')
                                             ->disk('public')
-                                            ->preserveFilenames()
                                             ->helperText('Upload an APK, ZIP, or EXE file for this product.')
                                             ->maxSize(51200)
                                             ->acceptedFileTypes(['application/vnd.android.package-archive', 'application/zip', 'application/x-zip-compressed', 'application/x-msdownload', 'application/x-ms-dos-executable'])

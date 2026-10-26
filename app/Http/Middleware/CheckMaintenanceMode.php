@@ -28,18 +28,22 @@ class CheckMaintenanceMode
         $bypassKey = (string) setting('maintenance_bypass_key', '');
 
         if ($bypassKey !== '') {
-            if ($request->query('bypass_key') === $bypassKey) {
+            $queryKey = (string) $request->query('bypass_key', '');
+            $cookieKey = (string) $request->cookie('maintenance_bypass_token', '');
+
+            if ($queryKey !== '' && hash_equals($bypassKey, $queryKey)) {
                 $response = $next($request);
 
                 return $response->withCookie(cookie(
                     name: 'maintenance_bypass_token',
                     value: $bypassKey,
                     minutes: 60 * 24, // 24 hours
-                    httpOnly: true
+                    httpOnly: true,
+                    sameSite: 'lax'
                 ));
             }
 
-            if ($request->cookie('maintenance_bypass_token') === $bypassKey) {
+            if ($cookieKey !== '' && hash_equals($bypassKey, $cookieKey)) {
                 return $next($request);
             }
         }

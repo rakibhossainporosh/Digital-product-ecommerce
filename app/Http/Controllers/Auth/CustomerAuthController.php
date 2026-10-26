@@ -8,6 +8,7 @@ use App\Models\Customer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -33,21 +34,36 @@ class CustomerAuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
+        $throttleKey = Str::transliterate(Str::lower($credentials['email']).'|'.$request->ip());
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            throw ValidationException::withMessages([
+                'email' => ["Too many login attempts. Please try again in {$seconds} seconds."],
+            ]);
+        }
+
         $customer = Customer::where('email', $credentials['email'])
             ->orWhere('whatsapp_number', $credentials['email'])
             ->first();
 
         if (! $customer || ! Hash::check($credentials['password'], $customer->password)) {
+            RateLimiter::hit($throttleKey, 60);
+
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials do not match our records.'],
             ]);
         }
 
         if ($customer->status === CustomerStatus::Banned) {
+            RateLimiter::hit($throttleKey, 60);
+
             throw ValidationException::withMessages([
                 'email' => ['Your account has been suspended or banned. Please contact customer support.'],
             ]);
         }
+
+        RateLimiter::clear($throttleKey);
 
         auth('customer')->login($customer, $request->boolean('remember'));
         $request->session()->regenerate();
@@ -70,6 +86,15 @@ class CustomerAuthController extends Controller
      */
     public function register(Request $request): RedirectResponse
     {
+        $ipThrottleKey = 'customer-register|'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($ipThrottleKey, 5)) {
+            $seconds = RateLimiter::availableIn($ipThrottleKey);
+            throw ValidationException::withMessages([
+                'email' => ["Too many registration requests from your IP. Please try again in {$seconds} seconds."],
+            ]);
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:150', 'unique:customers,email'],
@@ -77,6 +102,8 @@ class CustomerAuthController extends Controller
             'password' => ['required', 'string', 'min:6', 'confirmed'],
             'referral_code' => ['nullable', 'string', 'exists:customers,referral_code'],
         ]);
+
+        RateLimiter::hit($ipThrottleKey, 300); // Max 5 registrations per 5 minutes per IP
 
         // Find referrer if provided
         $referrer = null;

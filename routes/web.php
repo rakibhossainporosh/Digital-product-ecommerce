@@ -38,17 +38,29 @@ Route::middleware([RedirectIfCustomerAuthenticated::class])->group(function () {
 Route::middleware(['auth:customer'])->group(function () {
     Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('logout');
 
-    // Checkout & Purchase
-    Route::post('/checkout/validate-promo', [CheckoutController::class, 'validatePromo'])->name('checkout.validate-promo');
-    Route::post('/checkout/wallet', [CheckoutController::class, 'walletCheckout'])->name('checkout.wallet');
-    Route::post('/checkout/gateway', [CheckoutController::class, 'gatewayCheckout'])->name('checkout.gateway');
+    // Checkout & Purchase (Rate limited against automated brute-force)
+    Route::post('/checkout/validate-promo', [CheckoutController::class, 'validatePromo'])
+        ->middleware('throttle:15,1')
+        ->name('checkout.validate-promo');
+
+    Route::post('/checkout/wallet', [CheckoutController::class, 'walletCheckout'])
+        ->middleware('throttle:10,1')
+        ->name('checkout.wallet');
+
+    Route::post('/checkout/gateway', [CheckoutController::class, 'gatewayCheckout'])
+        ->middleware('throttle:10,1')
+        ->name('checkout.gateway');
 
     // Customer Portal
     Route::get('/dashboard', [CustomerDashboardController::class, 'dashboard'])->name('customer.dashboard');
     Route::get('/orders', [CustomerDashboardController::class, 'orders'])->name('customer.orders');
     Route::get('/keys', [CustomerDashboardController::class, 'myKeys'])->name('customer.keys');
     Route::get('/wallet', [CustomerDashboardController::class, 'wallet'])->name('customer.wallet');
-    Route::post('/wallet/deposit', [CustomerDashboardController::class, 'deposit'])->name('customer.wallet.deposit');
+
+    Route::post('/wallet/deposit', [CustomerDashboardController::class, 'deposit'])
+        ->middleware('throttle:8,1')
+        ->name('customer.wallet.deposit');
+
     Route::get('/referrals', [CustomerDashboardController::class, 'referrals'])->name('customer.referrals');
 });
 
@@ -59,6 +71,7 @@ Route::middleware(['auth:customer'])->group(function () {
 */
 Route::post('/api/payment/webhook', [PaymentController::class, 'webhook'])
     ->withoutMiddleware([VerifyCsrfToken::class])
+    ->middleware('throttle:60,1')
     ->name('payment.webhook');
 
 Route::get('/payment/verify', [PaymentController::class, 'verify'])->name('payment.verify');

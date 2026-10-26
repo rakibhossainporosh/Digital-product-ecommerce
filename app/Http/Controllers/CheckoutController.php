@@ -74,8 +74,8 @@ class CheckoutController extends Controller
         $validated = $request->validate([
             'variant_id' => ['required', 'exists:product_variants,id'],
             'quantity' => ['required', 'integer', 'min:1', 'max:50'],
-            'promo_code' => ['nullable', 'string'],
-            'service_data' => ['nullable', 'array'],
+            'promo_code' => ['nullable', 'string', 'max:50'],
+            'service_data' => ['nullable', 'array', 'max:20'],
             'customer_notes' => ['nullable', 'string', 'max:500'],
         ]);
 
@@ -130,8 +130,8 @@ class CheckoutController extends Controller
         $validated = $request->validate([
             'variant_id' => ['required', 'exists:product_variants,id'],
             'quantity' => ['required', 'integer', 'min:1', 'max:50'],
-            'promo_code' => ['nullable', 'string'],
-            'service_data' => ['nullable', 'array'],
+            'promo_code' => ['nullable', 'string', 'max:50'],
+            'service_data' => ['nullable', 'array', 'max:20'],
             'customer_notes' => ['nullable', 'string', 'max:500'],
         ]);
 

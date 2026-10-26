@@ -121,9 +121,9 @@ class PaymentGatewayService
      */
     public function processWebhook(array $payload, ?string $apiKeyHeader): array
     {
-        $configuredApiKey = setting('uddoktapay_api_key');
+        $configuredApiKey = (string) setting('uddoktapay_api_key');
 
-        if (! $configuredApiKey || $apiKeyHeader !== $configuredApiKey) {
+        if (empty($configuredApiKey) || empty($apiKeyHeader) || ! hash_equals($configuredApiKey, (string) $apiKeyHeader)) {
             Log::warning('Invalid Webhook API Key attempt', ['header' => $apiKeyHeader]);
 
             return ['status' => 401, 'message' => 'Unauthorized Access'];
