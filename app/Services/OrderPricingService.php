@@ -33,8 +33,12 @@ class OrderPricingService
         Customer $customer,
         ProductVariant $variant,
         int $quantity = 1,
-        ?string $promoCode = null
+        PromoCode|string|null $promoCode = null
     ): array {
+        if ($promoCode instanceof PromoCode) {
+            $promoCode = $promoCode->code;
+        }
+
         $baseUnitPrice = (float) $variant->effective_price;
         $finalUnitPrice = $baseUnitPrice;
         $discountType = 'none';

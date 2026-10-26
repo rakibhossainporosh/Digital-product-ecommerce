@@ -94,7 +94,7 @@ class CheckoutController extends Controller
                 quantity: (int) $validated['quantity'],
                 paymentMethod: PaymentMethod::Wallet,
                 extra: [
-                    'promo_code' => $promo,
+                    'promo_code' => $promo?->code ?? ($validated['promo_code'] ?? null),
                     'service_data' => $validated['service_data'] ?? null,
                     'customer_notes' => $validated['customer_notes'] ?? null,
                     'ip_address' => $request->ip(),
@@ -149,7 +149,7 @@ class CheckoutController extends Controller
                 quantity: (int) $validated['quantity'],
                 paymentMethod: PaymentMethod::Gateway,
                 extra: [
-                    'promo_code' => $promo,
+                    'promo_code' => $promo?->code ?? ($validated['promo_code'] ?? null),
                     'service_data' => $validated['service_data'] ?? null,
                     'customer_notes' => $validated['customer_notes'] ?? null,
                     'ip_address' => $request->ip(),
